@@ -19,9 +19,6 @@
       <p class="text-2xl font-semibold">Platform Launch</p>
     </div>
     <div class="flex items-center space-x-4">
-      <div>
-        <TaskAdder/>
-      </div>
       <ThemeSwitcher/>
     </div>
   </div>

@@ -1,10 +1,9 @@
 <script lang="ts">
+  import BoardAdder from "./BoardAdder.svelte";
   import Button from "./ui/button/button.svelte";
   import { PanelsTopLeft } from "lucide-svelte";
   import hideSide from "$assets/icon-hide-sidebar.svg";
   import { sideBarStatus } from "@/stores/Status";
-
-
 </script>
 
 {#if $sideBarStatus}
@@ -18,16 +17,8 @@
         <PanelsTopLeft class="text-gray-400" />
         <p class="ml-3">Platform Launcher</p>
       </Button>
-
       <!-- * Button that creates a new board-->
-      <Button
-        variant="side_bar_inactive"
-        size="sidebar"
-        class="py-3  w-[90%] text-purp_manager-def"
-      >
-        <PanelsTopLeft class="text-purp_manager-def" />
-        <p class="ml-3">+Create New Board</p>
-      </Button>
+      <BoardAdder />
     </div>
     <div></div>
     <div></div>
@@ -39,7 +30,7 @@
         class="py-3  w-[90%] text-purp_manager-def"
         on:click={() => sideBarStatus.set(!$sideBarStatus)}
       >
-        <img src={hideSide} alt="eye off" class="mr-5"/>
+        <img src={hideSide} alt="eye off" class="mr-5" />
         Hide Sidebar
       </Button>
     </div>

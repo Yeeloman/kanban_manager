@@ -7,7 +7,10 @@
   import showSide from "$assets/icon-show-sidebar.svg";
   import Button from "@/components/ui/button/button.svelte";
   import { sideBarStatus } from "@/stores/Status";
+  import { superForm } from 'sveltekit-superforms';
 
+  export let data;
+  const { form } = superForm(data.boardAdderForm);
 </script>
 
 <ModeWatcher />

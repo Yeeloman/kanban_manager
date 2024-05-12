@@ -17,6 +17,8 @@ const buttonVariants = tv({
 			active: "bg-purp_manager-def text-white hover:bg-purp_manager-hov",
 			side_bar_active: "bg-purp_manager-def font-bold text-white hover:text-purp_manager-def hover:bg-slate-100 dark:bg-purp_manager-def dark:hover:text-purp_manager-def dark:hover:bg-white",
 			side_bar_inactive: "bg-whitetext-gray-500 font-bold hover:bg-slate-100 hover:text-purp_manager-def dark:bg-dark_theme-front dark:hover:bg-white dark:hover:text-purp_manager-def",
+			minimalAdd: "bg-white hover:bg-slate-100 p-3 dark:bg-dark_theme-back dark:hover:bg-white ",
+			taskCard: "bg-slate-100 dark:bg-dark_theme-back text-xl font-semibold"
 		},
 		size: {
 			default: "h-10 px-4 py-2",

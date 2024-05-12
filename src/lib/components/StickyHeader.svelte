@@ -23,22 +23,6 @@
         <TaskAdder/>
       </div>
       <ThemeSwitcher/>
-      <!-- <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          <EllipsisVertical class="w-8 h-8" />
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content class="dark:bg-dark_theme-back">
-          <DropdownMenu.Group>
-            <DropdownMenu.Item>Edit board</DropdownMenu.Item>
-            <DropdownMenu.Item class="text-red-600">
-              Delete board
-            </DropdownMenu.Item>
-            <DropdownMenu.Item>
-              <ThemeSwitcher/>
-            </DropdownMenu.Item>
-          </DropdownMenu.Group>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root> -->
     </div>
   </div>
 </header>

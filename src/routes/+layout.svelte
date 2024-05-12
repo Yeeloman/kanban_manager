@@ -1,12 +1,12 @@
 <script lang="ts">
-	import NewColumn from '@/components/BoardEdit.svelte';
+	import BoardEdit from '@/components/BoardEdit.svelte';
   import "../app.css";
   import { ModeWatcher } from "mode-watcher";
   import StickyHeader from "@/components/StickyHeader.svelte";
   import SideBar from "@/components/SideBar.svelte";
   import showSide from "$assets/icon-show-sidebar.svg";
   import Button from "@/components/ui/button/button.svelte";
-  import { sideBarStatus } from "@/stores/SideBarStatus";
+  import { sideBarStatus } from "@/stores/Status";
 
 </script>
 
@@ -20,7 +20,7 @@
       <SideBar />
     </div>
   {:else}
-    <div class="fixed bottom-10">
+    <div class="fixed bottom-10 z-[420]">
       <Button
         variant="active"
         size="sidebar"
@@ -34,6 +34,7 @@
     <slot></slot>
   </div>
 </div>
+
 <div class="z-[69] fixed right-5 bottom-5">
-  <NewColumn/>
+  <BoardEdit/>
 </div>

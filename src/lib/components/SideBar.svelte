@@ -2,7 +2,7 @@
   import Button from "./ui/button/button.svelte";
   import { PanelsTopLeft } from "lucide-svelte";
   import hideSide from "$assets/icon-hide-sidebar.svg";
-  import { sideBarStatus } from "@/stores/SideBarStatus";
+  import { sideBarStatus } from "@/stores/Status";
 
 
 </script>
@@ -39,7 +39,7 @@
         class="py-3  w-[90%] text-purp_manager-def"
         on:click={() => sideBarStatus.set(!$sideBarStatus)}
       >
-        <img src={hideSide} alt="eye off" />
+        <img src={hideSide} alt="eye off" class="mr-5"/>
         Hide Sidebar
       </Button>
     </div>

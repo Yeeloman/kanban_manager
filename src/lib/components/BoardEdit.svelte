@@ -55,7 +55,6 @@
       </Button>
       <div class="w-1/6 flex justify-center items-center">
         <DeleteBoardDialog />
-
       </div>
     </Dialog.Footer>
   </Dialog.Content>

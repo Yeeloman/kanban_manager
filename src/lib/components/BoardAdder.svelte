@@ -8,7 +8,6 @@
   import Input from "./ui/input/input.svelte";
   import { PanelsTopLeft } from "lucide-svelte";
   import { superForm } from "sveltekit-superforms";
-  import SuperDebug from "sveltekit-superforms";
 
   export let boardAdderForm;
 
@@ -43,15 +42,18 @@
       variant="side_bar_inactive"
       size="sidebar"
       class="py-3  w-[90%] text-purp_manager-def"
-      on:click={handleReset}
-    >
+      on:click={handleReset}>
       <PanelsTopLeft class="text-purp_manager-def" />
       <p class="ml-3">+Create New Board</p>
     </Button>
   </Dialog.Trigger>
   <Dialog.Content class={$bgDialogCss}>
-    <!-- <SuperDebug data={$form} /> -->
-    <form use:enhance method="POST" class="w-full h-full space-y-2">
+    <form
+      action="?/add"
+      method="POST"
+      class="w-full h-full space-y-2"
+      use:enhance
+      >
       <Dialog.Header>
         <!-- * header of the diamog-->
         <Dialog.Title>Add New board</Dialog.Title>
@@ -88,7 +90,7 @@
           {/if}
           {#each $form.board_columns as input, index}
             <div class="flex justify-center items-center gap-1">
-              <Input bind:value={input} />
+              <Input bind:value={input} name={`input-${index}`}/>
               <Button
                 variant="ghost"
                 on:click={() => handleInputRemover(index)}
@@ -122,9 +124,9 @@
             <Button
               variant="side_bar_inactive"
               size="rounded"
-              class="p-3 w-full"
+              class="w-full"
             >
-              <a href={`/${newBoard}`}> Nav to {newBoard} </a>
+              <a href={`/${newBoard}`} class="w-full h-full p-3 rounded-full"> Nav to {newBoard}</a>
             </Button>
           </Dialog.Close>
         {/if}

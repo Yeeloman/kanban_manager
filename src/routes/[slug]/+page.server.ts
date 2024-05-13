@@ -14,7 +14,7 @@ export const load = (async () => {
 });
 
 export const actions = {
-    default: async ({ request }: { request: Request }) => {
+    add: async ({ request }: { request: Request }) => {
         const boardAdderForm = await superValidate(request, zod(boardAdderSchema));
 
         if (!boardAdderForm.valid) {
@@ -23,6 +23,18 @@ export const actions = {
             });
         }
 
-        return message(boardAdderForm, boardAdderForm.data.board_name);
+        return message(boardAdderForm, boardAdderForm.data.board_name)
+    },
+
+    edit: async ({ request }: { request: Request }) => {
+        const boardEditorForm = await superValidate(request, zod(boardEditorSchema));
+
+        if (!boardEditorForm.valid) {
+            return fail(400, {
+                boardEditorForm
+            });
+        }
+        console.log(boardEditorForm)
+        return message(boardEditorForm, boardEditorForm.data.edit_bname)
     }
 }

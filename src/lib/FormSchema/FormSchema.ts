@@ -6,6 +6,6 @@ export const boardAdderSchema = z.object({
 });
 
 export const boardEditorSchema = z.object({
-    board_name: z.string().min(5),
-    board_columns: z.array(z.string().min(10))
+    edit_bname: z.string().min(1, "Board name can't be empty"),
+    edit_bcolumns: z.array(z.string().min(1, "Task can not be empty"))
 });

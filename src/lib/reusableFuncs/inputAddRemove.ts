@@ -1,8 +1,8 @@
 export default class InputArray {
     inputs: { value: string }[];
 
-    constructor() {
-        this.inputs = [{ value: "" }, { value: "" }];
+    constructor(initial_val: {value: string }[] = [{ value: "" }, { value: "" }]) {
+        this.inputs = initial_val;
     }
 
     inputAdder() {
@@ -11,9 +11,5 @@ export default class InputArray {
 
     inputRemover(index: number) {
         this.inputs = this.inputs.filter((_, i) => i !== index);
-    }
-
-    inputReset() {
-        this.inputs = [{ value: "" }, { value: "" }];
     }
 }

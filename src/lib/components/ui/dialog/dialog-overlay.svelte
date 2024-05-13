@@ -11,8 +11,8 @@
 		duration: 150,
 	};
 	export { className as class };
-</script>
 
+</script>
 <DialogPrimitive.Overlay
 	{transition}
 	{transitionConfig}

@@ -51,6 +51,11 @@
         <Label>Subtasks</Label>
 
         <ScrollArea class="w-full h-[100px]">
+          {#if inputs.inputs.length === 0}
+            <div class="flex justify-center items-center text-gray-300 font-semibold opacity-40">
+              No Subtasks are available
+            </div>
+          {/if}
           {#each inputs.inputs as input, index}
             <div class="flex justify-center items-center gap-1">
               <Input bind:value={input.value} name={`input-${index}`} />

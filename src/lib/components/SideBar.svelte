@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { superValidate, type SuperValidated } from 'sveltekit-superforms';
   import BoardAdder from "./BoardAdder.svelte";
   import Button from "./ui/button/button.svelte";
   import { PanelsTopLeft } from "lucide-svelte";
   import hideSide from "$assets/icon-hide-sidebar.svg";
   import { sideBarStatus } from "@/stores/Status";
+
+  export let boardAdderForm;
 </script>
 
 {#if $sideBarStatus}
@@ -18,7 +21,7 @@
         <p class="ml-3">Platform Launcher</p>
       </Button>
       <!-- * Button that creates a new board-->
-      <BoardAdder />
+      <BoardAdder {boardAdderForm}/>
     </div>
     <div></div>
     <div></div>

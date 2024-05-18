@@ -8,10 +8,11 @@
   import Input from "./ui/input/input.svelte";
   import { PanelsTopLeft } from "lucide-svelte";
   import { superForm } from "sveltekit-superforms";
+  import * as Tooltip from "$lib/components/ui/tooltip";
 
   export let boardAdderForm;
 
-  const { form, enhance, errors, message } = superForm(boardAdderForm, {
+  const { form, enhance, message } = superForm(boardAdderForm, {
     dataType: "json",
   });
 
@@ -32,8 +33,21 @@
   function handleReset() {
     $form.board_name = "";
     $form.board_columns = ["", ""];
-    $errors = {};
   }
+
+  $: isTaskEmpty = () => {
+    for (const [key, value] of Object.entries($form.board_columns)) {
+      if (!value) {
+        return false;
+      }
+    }
+    return true;
+  };
+  $: enab =
+    ($form.board_name && $form.board_columns.length == 0) ||
+    ($form.board_name && isTaskEmpty())
+      ? false
+      : true;
 </script>
 
 <Dialog.Root>
@@ -42,7 +56,8 @@
       variant="side_bar_inactive"
       size="sidebar"
       class="py-3  w-[90%] text-purp_manager-def"
-      on:click={handleReset}>
+      on:click={handleReset}
+    >
       <PanelsTopLeft class="text-purp_manager-def" />
       <p class="ml-3">+Create New Board</p>
     </Button>
@@ -53,33 +68,35 @@
       method="POST"
       class="w-full h-full space-y-2"
       use:enhance
-      >
+    >
       <Dialog.Header>
         <!-- * header of the diamog-->
         <Dialog.Title>Add New board</Dialog.Title>
       </Dialog.Header>
       <!-- * Body of the Dialog -->
       <div class="space-y-2">
-        <Label for="board_name">Board Name</Label>
+        <Label for="board_name" class="mr-3">Board Name</Label>
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              <span class="text-purp_manager-def font-bold text-lg">*</span>
+            </Tooltip.Trigger>
+            <Tooltip.Content class="bg-slate-100 dark:bg-dark_theme-back">
+              <p>Board name can't be empty</p>
+            </Tooltip.Content>
+          </Tooltip.Root>
         <Input type="text" name="board_name" bind:value={$form.board_name} />
-        {#if $errors.board_name}
-          <input
-            class="text-red-500 w-full bg-transparent border-none p-1"
-            bind:value={$errors.board_name}
-            disabled
-          />
-        {/if}
       </div>
       <div class="space-y-2">
         <!-- * board column section -->
-          <Label for="board_col" class="w-full">Board Columns</Label>
-          {#if $errors.board_columns && $errors.board_columns[0]}
-            <input
-              class="text-red-500 w-full bg-transparent border-none p-1 text-sm "
-              bind:value={$errors.board_columns[0]}
-              disabled
-            />
-          {/if}
+        <Label for="board_col" class="w-full mr-3">Board Columns</Label>
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              <span class="text-purp_manager-def font-bold text-lg">*</span>
+            </Tooltip.Trigger>
+            <Tooltip.Content class="bg-slate-100 dark:bg-dark_theme-back">
+              <p>A task can't be empty</p>
+            </Tooltip.Content>
+          </Tooltip.Root>
         <ScrollArea class="w-full h-[150px]">
           {#if $form.board_columns.length === 0}
             <div
@@ -90,7 +107,7 @@
           {/if}
           {#each $form.board_columns as input, index}
             <div class="flex justify-center items-center gap-1">
-              <Input bind:value={input} name={`input-${index}`}/>
+              <Input bind:value={input} name={`input-${index}`} />
               <Button
                 variant="ghost"
                 on:click={() => handleInputRemover(index)}
@@ -116,17 +133,16 @@
           variant="active"
           size="rounded"
           class="p-3 w-full"
+          disabled={enab}
         >
           Create New Board
         </Button>
         {#if $message}
           <Dialog.Close class="w-full" on:click={() => ($message = undefined)}>
-            <Button
-              variant="side_bar_inactive"
-              size="rounded"
-              class="w-full"
-            >
-              <a href={`/${newBoard}`} class="w-full h-full p-3 rounded-full"> Nav to {newBoard}</a>
+            <Button variant="side_bar_inactive" size="rounded" class="w-full">
+              <a href={`/${newBoard}`} class="w-full h-full p-3 rounded-full">
+                Nav to {newBoard}</a
+              >
             </Button>
           </Dialog.Close>
         {/if}

@@ -8,7 +8,13 @@
   import Button from "@/components/ui/button/button.svelte";
 
   export let data;
-  const { boardAdderForm, boardEditorForm } = data.forms;
+  const {
+    boardAdderForm,
+    boardEditorForm,
+    taskAdderForm,
+    taskEditorForm,
+    taskDisplayerForm
+  } = data.forms;
 
 </script>
 
@@ -30,7 +36,11 @@
   {/if}
   <div class="flex-grow">
     <main class="{$bgPageCss} grid grid-cols-3 gap-4 h-fit min-h-screen p-5">
-      <ColDisplayer />
+      <ColDisplayer
+        {taskAdderForm}
+        {taskEditorForm}
+        {taskDisplayerForm}
+      />
     </main>
   </div>
 </div>

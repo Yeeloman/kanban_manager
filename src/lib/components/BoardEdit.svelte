@@ -9,13 +9,13 @@
   import ScrollArea from "./ui/scroll-area/scroll-area.svelte";
   import { superForm } from "sveltekit-superforms";
   export let boardEditorForm;
+  import * as Tooltip from "$lib/components/ui/tooltip";
 
-  const { form, enhance, errors, message } = superForm(boardEditorForm, {
+  const { form, enhance, errors } = superForm(boardEditorForm, {
     dataType: "json",
   });
 
   $: $form.edit_bcolumns = ["", ""];
-  $: newBoard = $message;
 
   function handleInputRemover(index: number) {
     $form.edit_bcolumns = $form.edit_bcolumns.filter(
@@ -26,14 +26,22 @@
   function handleInputAdder() {
     $form.edit_bcolumns = [...$form.edit_bcolumns, ""];
     $form.edit_bcolumns = $form.edit_bcolumns;
-    console.log("test:   ", $errors)
+    console.log("test:   ", $errors);
   }
 
-  function handleReset() {
-    $form.edit_bname = "";
-    $form.edit_bcolumns = ["", ""];
-    $errors = {};
-  }
+  $: isTaskEmpty = () => {
+    for (const [key, value] of Object.entries($form.edit_bcolumns)) {
+      if (!value) {
+        return false;
+      }
+    }
+    return true;
+  };
+  $: enab =
+    ($form.edit_bname && $form.edit_bcolumns.length == 0) ||
+    ($form.edit_bname && isTaskEmpty())
+      ? false
+      : true;
 </script>
 
 <Dialog.Root>
@@ -60,26 +68,28 @@
       </Dialog.Header>
       <!-- * Body of the Dialog -->
       <div class="space-y-2">
-        <Label for="board_name">Board Name</Label>
+        <Label for="board_name" class="mr-3">Board Name</Label>
+        <Tooltip.Root>
+          <Tooltip.Trigger>
+            <span class="text-purp_manager-def font-bold text-lg">*</span>
+          </Tooltip.Trigger>
+          <Tooltip.Content class="bg-slate-100 dark:bg-dark_theme-back">
+            <p>Board name can't be empty</p>
+          </Tooltip.Content>
+        </Tooltip.Root>
         <Input type="text" name="board_name" bind:value={$form.edit_bname} />
-        {#if $errors.edit_bname}
-          <input
-            class="text-red-500 w-full bg-transparent border-none p-1"
-            bind:value={$errors.edit_bname}
-            disabled
-          />
-        {/if}
       </div>
       <div class="space-y-2">
         <!-- * board column section -->
-        <Label for="board_col">Board Columns</Label>
-        {#if $errors.edit_bcolumns && $errors.edit_bcolumns[0]}
-          <input
-            class="text-red-500 w-full bg-transparent border-none p-1 text-sm"
-            bind:value={$errors.edit_bcolumns[0]}
-            disabled
-          />
-        {/if}
+        <Label for="board_col" class="mr-2">Board Columns</Label>
+        <Tooltip.Root>
+          <Tooltip.Trigger>
+            <span class="text-purp_manager-def font-bold text-lg">*</span>
+          </Tooltip.Trigger>
+          <Tooltip.Content class="bg-slate-100 dark:bg-dark_theme-back">
+            <p>A task can't be empty</p>
+          </Tooltip.Content>
+        </Tooltip.Root>
         <ScrollArea class="w-full h-[150px]">
           {#if $form.edit_bcolumns.length === 0}
             <div
@@ -90,11 +100,7 @@
           {/if}
           {#each $form.edit_bcolumns as input, index}
             <div class="flex justify-center items-center gap-1">
-              <Input
-                type="text"
-                bind:value={input}
-                name={`input-${index}`}
-              />
+              <Input type="text" bind:value={input} name={`input-${index}`} />
               <Button
                 variant="ghost"
                 on:click={() => handleInputRemover(index)}
@@ -115,9 +121,20 @@
       </Button>
       <Dialog.Footer>
         <!-- * footer of the dialog -->
-        <Button variant="active" size="rounded" class="p-3 w-full" type="submit">
-          Save changes
-        </Button>
+        <Dialog.Close
+          class="w-full"
+          disabled={enab}
+          >
+          <Button
+            variant="active"
+            size="rounded"
+            class="p-3 w-full"
+            type="submit"
+            disabled={enab}
+          >
+            Save changes
+          </Button>
+        </Dialog.Close>
         <div class="w-1/6 flex justify-center items-center">
           <DeleteBoardDialog />
         </div>

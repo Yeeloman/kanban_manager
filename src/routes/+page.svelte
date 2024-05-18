@@ -10,21 +10,46 @@
 
   export let data: PageData;
 
-  const { signInForm } = data.form;
+  const { signInForm, signUpForm } = data.form;
 
-  const { form, enhance, errors } = superForm(signInForm, {
-    dataType: 'json',
+  const {
+    form: Iform,
+    enhance: Ienhance,
+    errors: Ierrors,
+  } = superForm(signInForm, {
+    dataType: "json",
   });
 
-  function showErrors() {
-    if ($errors.username) {
-      toast($errors.username[0])
-    }
-    if ($errors.password) {
-      toast($errors.password[0])
-    }
+  const {
+    form: Uform,
+    enhance: Uenhance,
+    errors: Uerrors,
+  } = superForm(signUpForm, {
+    dataType: "json",
+  });
 
+  function IshowErrors() {
+    if ($Ierrors.username) {
+      toast($Ierrors.username[0]);
+    }
+    if ($Ierrors.password) {
+      toast($Ierrors.password[0]);
+    }
+  }
 
+  function UshowErrors() {
+    if ($Uerrors.username) {
+      toast($Uerrors.username[0])
+    }
+    if ($Uerrors.email) {
+      toast($Uerrors.email[0])
+    }
+    if ($Uerrors.password) {
+      toast($Uerrors.password[0])
+    }
+    if ($Uerrors.conf_pwd) {
+      toast($Uerrors.conf_pwd[0])
+    }
   }
 </script>
 
@@ -43,11 +68,7 @@
       </Tabs.List>
       <Tabs.Content value="signin" class="">
         <Card.Root class="dark:bg-dark_theme-front">
-          <form
-            action="?/signIn"
-            method="post"
-            use:enhance
-          >
+          <form action="?/signIn" method="post" use:Ienhance>
             <Card.Header>
               <Card.Title>Sign In</Card.Title>
               <Card.Description>
@@ -60,7 +81,8 @@
                 <Input
                   id="username"
                   placeholder="username"
-                  bind:value={$form.username}/>
+                  bind:value={$Iform.username}
+                />
               </div>
               <div class="space-y-1">
                 <Label for="username">Password</Label>
@@ -68,7 +90,7 @@
                   id="password"
                   type="password"
                   placeholder="*********"
-                  bind:value={$form.password}
+                  bind:value={$Iform.password}
                 />
               </div>
             </Card.Content>
@@ -78,7 +100,7 @@
                 size="lg"
                 class="rounded-lg"
                 type="submit"
-                on:click={showErrors}
+                on:click={IshowErrors}
               >
                 Sign In
               </Button>
@@ -88,38 +110,46 @@
       </Tabs.Content>
       <Tabs.Content value="signup">
         <Card.Root class="dark:bg-dark_theme-front">
-          <Card.Header>
-            <Card.Title>Sign Up</Card.Title>
-            <Card.Description>
-              Create your account and start organizing your projects.
-            </Card.Description>
-          </Card.Header>
-          <Card.Content class="space-y-2">
-            <div class="space-y-1">
-              <Label for="username">Username</Label>
-              <Input id="username" type="email" />
-            </div>
-            <div class="space-y-1">
-              <Label for="email">Email</Label>
-              <Input id="email" type="email" />
-            </div>
-            <div class="space-y-1">
-              <Label for="new">New password</Label>
-              <Input id="new" type="password" />
-            </div>
-            <div class="space-y-1">
-              <Label for="confirm">confirm password</Label>
-              <Input id="confirm" type="password" />
-            </div>
-          </Card.Content>
-          <Card.Footer class="flex justify-center items-center">
-            <Button
-              variant="side_bar_active"
-              size="lg"
-              class="rounded-lg"
-              type="submit">Sign Up</Button
-            >
-          </Card.Footer>
+          <form action="?/signUp" method="POST" use:Uenhance>
+            <Card.Header>
+              <Card.Title>Sign Up</Card.Title>
+              <Card.Description>
+                Create your account and start organizing your projects.
+              </Card.Description>
+            </Card.Header>
+            <Card.Content class="space-y-2">
+              <div class="space-y-1">
+                <Label for="username">Username</Label>
+                <Input
+                  id="username"
+                  bind:value={$Uform.username}
+                />
+              </div>
+              <div class="space-y-1">
+                <Label for="email">Email</Label>
+                <Input id="email" type="email" bind:value={$Uform.email} />
+              </div>
+              <div class="space-y-1">
+                <Label for="new">New password</Label>
+                <Input id="new" type="password" bind:value={$Uform.password}/>
+              </div>
+              <div class="space-y-1">
+                <Label for="confirm">confirm password</Label>
+                <Input id="confirm" type="password" bind:value={$Uform.conf_pwd}/>
+              </div>
+            </Card.Content>
+            <Card.Footer class="flex justify-center items-center">
+              <Button
+                variant="side_bar_active"
+                size="lg"
+                class="rounded-lg"
+                type="submit"
+                on:click={UshowErrors}
+              >
+                Sign Up
+              </Button>
+            </Card.Footer>
+          </form>
         </Card.Root>
       </Tabs.Content>
     </Tabs.Root>

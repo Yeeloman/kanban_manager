@@ -1,20 +1,13 @@
-// import { drizzle } from "drizzle-orm/node-postgres";
-// import { Client } from "pg";
 import * as schema from './schema';
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
 import { YEELODB_URL } from '$env/static/private';
+import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/postgres-js';
 
-const client = neon(YEELODB_URL);
 
-// const client = new Client({
-//     connectionString:process.env.YEELODB_URL
-// })
-
-// client.connect()
+const client = postgres(YEELODB_URL);
 
 const db = drizzle(client, {
-    schema: schema
+    schema:schema
 })
 
 export default db;

@@ -1,10 +1,15 @@
 import db from '@/db/db';
+import { hash } from 'bcrypt';
 // import type { signUpType } from '@/FormSchema/FormSchema';
-import { users } from './schema';
+import { usersTable } from './schema';
 
-type newUser = typeof users.$inferInsert;
+type newUser = typeof usersTable.$inferInsert;
 
 export const signUp = async (form: newUser) => {
-    console.log('posting the data')
-    await db.insert(users).values(form);
+    console.log('adding the data to the db')
+
+
+    await db.insert(usersTable).values(form);
+
+
 }

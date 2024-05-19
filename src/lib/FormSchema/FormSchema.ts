@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+
 export const boardAdderSchema = z.object({
     board_name: z.string().min(1, "Board name can't be empty"),
     board_columns: z.array(z.string().min(1, "Task can not be empty"))
@@ -35,6 +36,7 @@ export const signInSchema = z.object({
     )
 });
 
+// export type signUpType = z.infer<typeof signUpSchema>
 export const signUpSchema = z.object({
     username: z.string().min(4, "Username must contain at least 4 characters"),
     email: z.string().email(),

@@ -3,5 +3,5 @@
 </script>
 
 <main class={$bgPageCss}>
-
+    user main page
 </main>

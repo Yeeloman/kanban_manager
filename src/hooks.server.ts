@@ -39,7 +39,7 @@ export const handle = (async ({ event, resolve }) => {
     })
   }
   //* redirect the user if he tries to go to login page while he is logged in
-  if (session && event.url.pathname === "/sign") {
+  if (session && event.url.pathname === "/login") {
     throw redirect(303, `/p/${user.username}`)
   }
 
@@ -48,4 +48,5 @@ export const handle = (async ({ event, resolve }) => {
 
   const response = await resolve(event);
   return response;
+
 }) satisfies Handle;

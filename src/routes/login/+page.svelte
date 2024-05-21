@@ -36,6 +36,10 @@
     if ($Ierrors.password) {
       toast($Ierrors.password[0]);
     }
+
+    // * reset errors
+    $Ierrors.username = [];
+    $Ierrors.password = [];
   }
 
   function UshowErrors() {
@@ -51,6 +55,12 @@
     if ($Uerrors.conf_pwd) {
       toast($Uerrors.conf_pwd[0])
     }
+
+    // * reset errors
+    $Uerrors.username = [];
+    $Uerrors.email = [];
+    $Uerrors.password = [];
+    $Uerrors.conf_pwd = [];
   }
 </script>
 

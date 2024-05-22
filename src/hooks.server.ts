@@ -1,6 +1,7 @@
 import { lucia } from "@/server/auth.server";
 import { redirect, type Handle } from "@sveltejs/kit";
 
+
 export const handle = (async ({ event, resolve }) => {
   //* Get the session id from the cookies
   const sessionId = event.cookies.get(lucia.sessionCookieName);
@@ -39,7 +40,7 @@ export const handle = (async ({ event, resolve }) => {
     })
   }
   //* redirect the user if he tries to go to login page while he is logged in
-  if (session && event.url.pathname === "/sign") {
+  if (session && event.url.pathname === "/login") {
     throw redirect(303, `/p/${user.username}`)
   }
 

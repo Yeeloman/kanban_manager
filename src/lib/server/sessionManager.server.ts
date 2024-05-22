@@ -22,7 +22,6 @@ export const getSessionByUserId = async (lucia: Lucia, userId: string, cookies: 
 		.from(sessionTable)
 		.where(eq(sessionTable.userId, userId))
 		.execute();
-	console.log("🚀 ~ getSessionByUserId ~ session:", session)
 
 		if (session.length > 0) {
 			const sessionCookie = lucia.createSessionCookie(session[0].id);

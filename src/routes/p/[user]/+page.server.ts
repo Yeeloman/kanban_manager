@@ -4,8 +4,10 @@ import { lucia } from '@/server/auth.server'
 import { redirect } from '@sveltejs/kit';
 
 
-export const load = (async () => {
-    return {};
+export const load = (async ({ params }) => {
+    return {
+		user: params.user
+	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {

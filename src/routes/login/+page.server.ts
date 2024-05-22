@@ -53,7 +53,6 @@ export const actions: Actions = {
             }
 
             await getSessionByUserId(lucia, user[0].id, cookies);
-            //await createAndSetSession(lucia, user[0].id, cookies);
 
         } catch (e) {
             console.log('Error:', e);

@@ -25,6 +25,7 @@ export const taskEditorSchema = z.object({
 
 export const taskDisplayerSchema = z.object({
     subtasks: z.array(z.boolean()),
+    status: z.enum(["TODO", "DOING", "DONE"]).default("TODO"),
     crnt_status: z.string()
 });
 

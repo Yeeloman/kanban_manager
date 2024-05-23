@@ -10,7 +10,7 @@
 
 <div class="flex flex-col items-center space-y-5">
   <div class="flex justify-center">
-    <h1 class="text-2xl font-bold text-gray-500 truncate w-[99.99%]">Column Title</h1>
+    <h1 class="text-2xl font-bold text-gray-500 truncate w-[99.99%]">Category</h1>
   </div>
   <div class="w-[90%]">
     <ScrollArea

@@ -13,12 +13,13 @@
 
   export let taskDisplayerForm;
   export let taskEditorForm;
+  export let task;
 
   const { form, enhance } = superForm(taskDisplayerForm, {
     dataType: "json",
   });
 
-  const statss = ["todo", "doing", "done"];
+  const statss = ["TODO", "DOING", "DONE"];
   $form.subtasks = [true];
 
 const STATUS = {
@@ -73,7 +74,7 @@ const STATUS = {
             Task Title
             <Popover.Root>
               <Popover.Trigger>
-                {#each $form.status as status}
+                {#each statss as status}
                   {#if status == crnt_status.name}
                     <div class="w-5 h-5 {crnt_status.color}"></div>
                   {/if}

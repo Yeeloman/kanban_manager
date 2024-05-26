@@ -18,15 +18,16 @@
   $: $form.edit_bcolumns = ["", ""];
 
   function handleInputRemover(index: number) {
-    $form.edit_bcolumns = $form.edit_bcolumns.filter(
-      (_: string, i: number) => i !== index
-    );
+    if ($form.edit_bcolumns.length > 1) {
+      $form.edit_bcolumns = $form.edit_bcolumns.filter(
+        (_: string, i: number) => i !== index
+      );
+    }
   }
 
   function handleInputAdder() {
     $form.edit_bcolumns = [...$form.edit_bcolumns, ""];
     $form.edit_bcolumns = $form.edit_bcolumns;
-    console.log("test:   ", $errors);
   }
 
   $: isTaskEmpty = () => {

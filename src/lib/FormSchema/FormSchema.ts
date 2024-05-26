@@ -39,12 +39,9 @@ export const signInSchema = z.object({
 
 // export type signUpType = z.infer<typeof signUpSchema>
 export const signUpSchema = z.object({
-    username: z.string().min(4, "Username must contain at least 4 characters"),
+    username: z.string(),
     email: z.string().email(),
-    password: z.string().min(8, "Password must contain at least 8 characters").regex(
-        /^.*(\d+).*$/,
-        "Password must contain at least one number"
-    ),
+    password: z.string(),
     conf_pwd: z.string(),
 }).refine(data => data.password === data.conf_pwd, {
     message: "Passwords do not match",

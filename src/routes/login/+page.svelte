@@ -38,8 +38,8 @@
     }
 
     // * reset errors
-    $Ierrors.username = [];
-    $Ierrors.password = [];
+    // $Ierrors.username = [];
+    // $Ierrors.password = [];
   }
 
   function UshowErrors() {

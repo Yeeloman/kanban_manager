@@ -6,6 +6,9 @@
   import { sideBarStatus } from "@/stores/Status";
   import showSide from "$assets/icon-show-sidebar.svg";
   import Button from "@/components/ui/button/button.svelte";
+  import stateManager from "@/stores/stateManager.js";
+  import { onMount } from "svelte";
+  import { crntBoard } from "@/stores/boardsStore.js";
 
   export let data;
   const {
@@ -13,9 +16,12 @@
     boardEditorForm,
     taskAdderForm,
     taskEditorForm,
-    taskDisplayerForm
+    taskDisplayerForm,
   } = data.forms;
 
+  const { allBoards } = data;
+
+  onMount(() => stateManager.set(allBoards));
 </script>
 
 <div class="flex">
@@ -36,15 +42,22 @@
   {/if}
   <div class="flex-grow">
     <main class="{$bgPageCss} grid grid-cols-3 gap-4 h-fit min-h-screen p-5">
-      <ColDisplayer
-        {taskAdderForm}
-        {taskEditorForm}
-        {taskDisplayerForm}
-      />
+      {#each $stateManager as board}
+        {#if board.active}
+          {#each board.category as item}
+            <ColDisplayer
+              {taskAdderForm}
+              {taskEditorForm}
+              {taskDisplayerForm}
+              category={item}
+            />
+          {/each}
+        {/if}
+      {/each}
     </main>
   </div>
 </div>
 
 <form class="z-[69] fixed right-5 bottom-5">
-  <BoardEdit {boardEditorForm}/>
+  <BoardEdit {boardEditorForm} />
 </form>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Writable } from 'svelte/store';
   import Button from "./ui/button/button.svelte";
   import Label from "./ui/label/label.svelte";
   import { ScrollArea } from "$lib/components/ui/scroll-area/index.js";
@@ -9,34 +10,43 @@
   import { PanelsTopLeft } from "lucide-svelte";
   import { superForm } from "sveltekit-superforms";
   import * as Tooltip from "$lib/components/ui/tooltip";
+  import { createEventDispatcher } from "svelte";
 
   export let boardAdderForm;
+  const dispatch = createEventDispatcher();
 
-  const { form, enhance, message } = superForm(boardAdderForm, {
+  const { form: Aform, enhance, message } = superForm(boardAdderForm, {
     dataType: "json",
   });
+  function sendBoard(message: Writable<any>) {
+    if (message) {
+      dispatch('boardAdded', message)
+    }
+  }
 
-  $: $form.board_columns = ["", ""];
-  $: newBoard = $message;
+  $: sendBoard($message)
+  $: $Aform.board_columns = ["", ""];
 
   function handleInputRemover(index: number) {
-    $form.board_columns = $form.board_columns.filter(
-      (_: string, i: number) => i !== index
-    );
+    if ($Aform.board_columns.length > 1) {
+      $Aform.board_columns = $Aform.board_columns.filter(
+        (_: string, i: number) => i !== index
+      );
+    }
   }
 
   function handleInputAdder() {
-    $form.board_columns = [...$form.board_columns, ""];
-    $form.board_columns = $form.board_columns;
+    $Aform.board_columns = [...$Aform.board_columns, ""];
+    $Aform.board_columns = $Aform.board_columns;
   }
 
   function handleReset() {
-    $form.board_name = "";
-    $form.board_columns = ["", ""];
+    $Aform.board_name = "";
+    $Aform.board_columns = ["", ""];
   }
 
   $: isTaskEmpty = () => {
-    for (const [key, value] of Object.entries($form.board_columns)) {
+    for (const [key, value] of Object.entries($Aform.board_columns)) {
       if (!value) {
         return false;
       }
@@ -44,8 +54,8 @@
     return true;
   };
   $: enab =
-    ($form.board_name && $form.board_columns.length == 0) ||
-    ($form.board_name && isTaskEmpty())
+    ($Aform.board_name && $Aform.board_columns.length == 0) ||
+    ($Aform.board_name && isTaskEmpty())
       ? false
       : true;
 </script>
@@ -84,7 +94,7 @@
               <p>Board name can't be empty</p>
             </Tooltip.Content>
           </Tooltip.Root>
-        <Input type="text" name="board_name" bind:value={$form.board_name} />
+        <Input type="text" name="board_name" bind:value={$Aform.board_name} />
       </div>
       <div class="space-y-2">
         <!-- * board column section -->
@@ -98,14 +108,14 @@
             </Tooltip.Content>
           </Tooltip.Root>
         <ScrollArea class="w-full h-[150px]">
-          {#if $form.board_columns.length === 0}
+          {#if $Aform.board_columns.length === 0}
             <div
               class="flex justify-center items-center text-gray-300 font-semibold opacity-40"
             >
               No Columns are available
             </div>
           {/if}
-          {#each $form.board_columns as input, index}
+          {#each $Aform.board_columns as input, index}
             <div class="flex justify-center items-center gap-1">
               <Input bind:value={input} name={`input-${index}`} />
               <Button
@@ -137,15 +147,6 @@
         >
           Create New Board
         </Button>
-        {#if $message}
-          <Dialog.Close class="w-full" on:click={() => ($message = undefined)}>
-            <Button variant="side_bar_inactive" size="rounded" class="w-full">
-              <a href={`/${newBoard}`} class="w-full h-full p-3 rounded-full">
-                Nav to {newBoard}</a
-              >
-            </Button>
-          </Dialog.Close>
-        {/if}
       </Dialog.Footer>
     </form>
   </Dialog.Content>

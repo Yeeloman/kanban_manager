@@ -114,6 +114,9 @@ importers:
       svelte-check:
         specifier: ^3.7.1
         version: 3.7.1(postcss-load-config@4.0.2(postcss@8.4.38))(postcss@8.4.38)(svelte@4.2.17)
+      svelte-debug-console:
+        specifier: ^0.0.2
+        version: 0.0.2
       sveltekit-superforms:
         specifier: ^2.13.1
         version: 2.13.1(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.1.0(svelte@4.2.17)(vite@5.2.11(@types/node@20.12.12)))(svelte@4.2.17)(vite@5.2.11(@types/node@20.12.12)))(@types/json-schema@7.0.15)(esbuild-runner@2.2.2(esbuild@0.19.12))(esbuild@0.19.12)(svelte@4.2.17)
@@ -2370,6 +2373,9 @@ packages:
     hasBin: true
     peerDependencies:
       svelte: ^3.55.0 || ^4.0.0-next.0 || ^4.0.0 || ^5.0.0-next.0
+
+  svelte-debug-console@0.0.2:
+    resolution: {integrity: sha512-MWyKG/cW1MEGoD7eL7BePfXwAdZ+hP64ItWRPdIBl32QEKJv75G6Jd0hL/64NJRlJUhXmGHlXbbLdWsljnKjeQ==}
 
   svelte-dev-helper@1.1.9:
     resolution: {integrity: sha512-oU+Xv7Dl4kRU2kdFjsoPLfJfnt5hUhsFUZtuzI3Ku/f2iAFZqBoEuXOqK3N9ngD4dxQOmN4OKWPHVi3NeAeAfQ==}
@@ -4686,6 +4692,12 @@ snapshots:
       - sass
       - stylus
       - sugarss
+
+  svelte-debug-console@0.0.2:
+    dependencies:
+      debug: 4.3.4
+    transitivePeerDependencies:
+      - supports-color
 
   svelte-dev-helper@1.1.9: {}
 

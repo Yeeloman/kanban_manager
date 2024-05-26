@@ -25,7 +25,9 @@ export const checkIfNameExist = async (username: string) => {
 }
 
 export const insertNewUser = async (user: newUser) => {
-    return await db.insert(usersTable).values(user);
+    return await db
+        .insert(usersTable)
+        .values(user);
 }
 
 export const getUserByName = async (userName: string) => {

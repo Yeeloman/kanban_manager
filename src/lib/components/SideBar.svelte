@@ -1,12 +1,20 @@
 <script lang="ts">
-	import { superValidate, type SuperValidated } from 'sveltekit-superforms';
+  // @ts-nocheck
   import BoardAdder from "./BoardAdder.svelte";
   import Button from "./ui/button/button.svelte";
   import { PanelsTopLeft } from "lucide-svelte";
   import hideSide from "$assets/icon-hide-sidebar.svg";
   import { sideBarStatus } from "@/stores/Status";
-
+  import stateManager from "@/stores/stateManager";
+  import { enhance } from '$app/forms';
+  import { crntBoard } from "@/stores/boardsStore";
   export let boardAdderForm;
+
+  function addBoard(event) {
+    stateManager.addBoard(event.detail);
+  }
+
+  $: allBoards = $stateManager;
 </script>
 
 {#if $sideBarStatus}
@@ -14,19 +22,44 @@
     class="bg-white dark:bg-dark_theme-front w-1/5 h-full fixed inset-t-10 left-0 flex flex-col justify-between"
   >
     <div>
-      <div class="text-gray-500 font-semilight p-5">All Boards (3)</div>
-      <!-- TODO create an loop that creates each button -->
-      <Button variant="side_bar_active" size="sidebar" class="py-3  w-[90%]">
-        <PanelsTopLeft class="text-gray-400" />
-        <p class="ml-3">Platform Launcher</p>
-      </Button>
+      <div class="text-gray-500 font-semilight p-5">
+        All Boards ({allBoards.length})
+      </div>
+      {#each allBoards as board}
+        <form
+          action="?/activateBoard"
+          method="POST"
+          class="w-ful"
+          on:submit|preventDefault={()=>stateManager.updateActiveStatus(board.id)}
+          use:enhance
+        >
+          <input type="hidden" name="board" value={JSON.stringify(board)} />
+
+          <Button
+            variant={board.active ? "side_bar_active" : "side_bar_inactive"}
+            size="sidebar"
+            class="py-3  w-[90%] flex justify-between"
+            type="submit"
+            on:click={() => ($crntBoard = board)}
+          >
+            <PanelsTopLeft class="text-gray-400 ml-9" />
+
+            <p
+              class="truncate w-[50%]"
+            >
+              {board.boardName}
+            </p>
+            <div></div>
+          </Button>
+        </form>
+      {/each}
       <!-- * Button that creates a new board-->
-      <BoardAdder {boardAdderForm}/>
+      <BoardAdder on:boardAdded={addBoard} {boardAdderForm} />
     </div>
     <div></div>
     <div></div>
     <div></div>
-    <div>
+    <div class="fixed bottom-3 w-1/5">
       <Button
         variant="side_bar_inactive"
         size="sidebar"

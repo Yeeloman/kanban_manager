@@ -13,8 +13,8 @@ const db = drizzle(client, {
 
 const main = async () => {
     try {
-        await deleteTableContent()
-        // await deleteTables()
+        deleteTableContent()
+        deleteTables()
         console.log('Seeding finished...')
         process.exit(0)
     } catch (e) {

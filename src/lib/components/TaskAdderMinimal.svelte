@@ -25,9 +25,7 @@
   $: if ($message) {
     stateManager.addTask($message.task[0])
     if($message.newSub) {
-      console.log("🚀 ~ newSub:", $message.newSub)
       for (const subtask of $message.newSub) {
-        console.log("🚀 ~ subtask:", subtask)
         stateManager.addSubTask(subtask)
       }
     }

@@ -4,6 +4,8 @@ import { boardAdderSchema, boardEditorSchema, taskAdderSchema, taskDisplayerSche
 import type { Actions } from './$types';
 import { createDashBoard, getActiveBoard, getAllBoards, getBoardById, setActiveBoard } from '@/db/dashBoardQuiries.server';
 import { createCategory, createCategoryHelper } from '@/db/ColumnsQuiries.server';
+import { createTask } from '@/db/tasksQuiries.server';
+import { createSubTask, createSubTaskHelper } from '@/db/subTasksQuiries.server';
 
 
 export const load = (async () => {
@@ -75,7 +77,37 @@ export const actions: Actions = {
                 taskAdderForm
             });
         }
-        return message(taskAdderForm, "task added")
+        try {
+            const {
+                task_name,
+                description,
+                category_id,
+                subtasks
+            } = taskAdderForm.data;
+
+            const task = await createTask({
+                name: task_name,
+                categoryId: category_id,
+                description: description ? description : "",
+
+            })
+
+            let newSub
+            if (subtasks) {
+                const subArr = createSubTaskHelper(subtasks, task[0].id)
+                newSub = await createSubTask(subArr)
+            }
+
+            return message(taskAdderForm, {
+                task,
+                newSub
+            })
+        } catch (e) {
+            console.log('Error adding the task ', e);
+            return fail(400, {
+                taskAdderForm
+            })
+        }
     },
 
     editTask: async ({ request }: { request: Request }) => {

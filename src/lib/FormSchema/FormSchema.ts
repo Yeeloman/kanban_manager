@@ -14,6 +14,7 @@ export const boardEditorSchema = z.object({
 export const taskAdderSchema = z.object({
     task_name: z.string().min(1, "Task name can't be empty"),
     description: z.string().optional(),
+    category_id: z.number(),
     subtasks: z.array(z.string().min(1, "Subtask can not be empty")).optional().default([]),
 });
 

@@ -119,12 +119,15 @@ export const subTasksTable = pgTable('subtask', {
         .primaryKey()
         .notNull(),
 
+    name: text('name')
+        .notNull(),
+
     done: boolean('done')
         .default(false),
 
     taskId: integer('task_id')
         .notNull()
-        .references(()=>tasksTable.id),
+        .references(()=>tasksTable.id, { onDelete: "cascade"}),
 });
 
 export const subTasksRelations = relations(subTasksTable, ({ one })=>({

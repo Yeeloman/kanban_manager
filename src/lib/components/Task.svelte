@@ -10,37 +10,41 @@
   import * as Select from "$lib/components/ui/select/index.js";
   import { superForm } from "sveltekit-superforms";
   import * as Popover from "$lib/components/ui/popover";
+  import stateManager from "@/stores/stateManager";
 
   export let taskDisplayerForm;
   export let taskEditorForm;
   export let task;
+  export let boardId;
 
   const { form, enhance } = superForm(taskDisplayerForm, {
     dataType: "json",
+    warnings: {
+      duplicateId: false,
+    },
   });
 
   const statss = ["TODO", "DOING", "DONE"];
-  $form.subtasks = [true];
 
-const STATUS = {
-  TODO: {
-    name: "TODO",
-    color: "bg-red-500",
-  },
-  DOING: {
-    name: "DOING",
-    color: "bg-orange-500",
-  },
-  DONE: {
-    name: "DONE",
-    color: "bg-green-500",
-  },
-};
+  const STATUS = {
+    TODO: {
+      name: "TODO",
+      color: "bg-red-500",
+    },
+    DOING: {
+      name: "DOING",
+      color: "bg-orange-500",
+    },
+    DONE: {
+      name: "DONE",
+      color: "bg-green-500",
+    },
+  };
   let crnt_status = STATUS.TODO;
 
-  const changeStatus = (stat: {name: string, color: string}) => {
-    crnt_status = stat
-  }
+  const changeStatus = (stat: { name: string; color: string }) => {
+    crnt_status = stat;
+  };
 </script>
 
 <div class="w-full h-full">
@@ -51,7 +55,7 @@ const STATUS = {
           variant="taskCard"
           class="flex flex-col items-start max-w-[75%]"
         >
-          <h2 class="truncate w-full">Task Title</h2>
+          <h2 class="truncate w-full">{task.name}</h2>
         </Button>
       </Dialog.Trigger>
       <div class="ml-2">
@@ -71,7 +75,7 @@ const STATUS = {
       >
         <Dialog.Header>
           <Dialog.Title class="font-semibold text-[30px] flex justify-between">
-            Task Title
+            {task.name}
             <Popover.Root>
               <Popover.Trigger>
                 {#each statss as status}
@@ -87,19 +91,23 @@ const STATUS = {
                   <Button
                     variant="ghost"
                     class="flex justify-between w-28"
-                    on:click={()=>changeStatus(STATUS.TODO)}
+                    on:click={() => changeStatus(STATUS.TODO)}
                   >
                     <div class="w-5 h-5 bg-red-500"></div>
                     <p>TODO</p>
                   </Button>
-                  <Button variant="ghost" class="flex justify-between w-28"
-                    on:click={()=>changeStatus(STATUS.DOING)}
+                  <Button
+                    variant="ghost"
+                    class="flex justify-between w-28"
+                    on:click={() => changeStatus(STATUS.DOING)}
                   >
                     <div class="w-5 h-5 bg-orange-500"></div>
                     <p>DOING</p>
                   </Button>
-                  <Button variant="ghost" class="flex justify-between w-28"
-                    on:click={()=>changeStatus(STATUS.DONE)}
+                  <Button
+                    variant="ghost"
+                    class="flex justify-between w-28"
+                    on:click={() => changeStatus(STATUS.DONE)}
                   >
                     <div class="w-5 h-5 bg-green-500"></div>
                     <p>DONE</p>
@@ -113,8 +121,8 @@ const STATUS = {
         <ScrollArea
           class="w-full h-[50%] bg-white rounded-lg p-2 dark:bg-dark_theme-front"
         >
-          {#each $form.subtasks as subT}
-            <SubTask {subT} />
+          {#each task.subtasks as subTask}
+            <SubTask {subTask} />
           {/each}
         </ScrollArea>
         <div class="h-1"></div>
@@ -127,15 +135,21 @@ const STATUS = {
             <Select.Trigger
               class="dark:bg-dark_theme-back rounded-full focus:border-purp_manager-def bg-slate-100 border-gray-500"
             >
-              <Select.Value placeholder="Current Category" />
+              <Select.Value placeholder="Categories" />
             </Select.Trigger>
             <Select.Content
               class="dark:bg-dark_theme-back rounded-lg border-gray-500"
             >
               <Select.Group>
                 <Select.Label>Categories</Select.Label>
-                {#each statss as stat}
-                  <Select.Item bind:value={stat}>{stat}</Select.Item>
+                {#each $stateManager as board}
+                  {#if board.id === boardId}
+                    {#each board.category as cat}
+                      <Select.Item bind:value={cat}>
+                        {cat.categoryName}
+                      </Select.Item>
+                    {/each}
+                  {/if}
                 {/each}
               </Select.Group>
               <Select.Input hidden bind:value={$form.crnt_status} />

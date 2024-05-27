@@ -7,8 +7,7 @@
   import showSide from "$assets/icon-show-sidebar.svg";
   import Button from "@/components/ui/button/button.svelte";
   import stateManager from "@/stores/stateManager.js";
-  import { onMount } from "svelte";
-  import { crntBoard } from "@/stores/boardsStore.js";
+  import { onMount, setContext } from "svelte";
 
   export let data;
   const {
@@ -21,7 +20,9 @@
 
   const { allBoards } = data;
 
+
   onMount(() => stateManager.set(allBoards));
+
 </script>
 
 <div class="flex">
@@ -49,6 +50,7 @@
               {taskAdderForm}
               {taskEditorForm}
               {taskDisplayerForm}
+              boardId={board.id}
               category={item}
             />
           {/each}

@@ -3,17 +3,22 @@
   import Label from "./ui/label/label.svelte";
 
     let checked = false;
-    export let subT: boolean;
+    export let subTask: {
+      id: number,
+      done: boolean,
+      name: string,
+      taskId: number
+    };
 </script>
 
 <div
   class="flex items-center space-x-3 p-3 hover:bg-purp_manager-def rounded-lg"
 >
-  <Checkbox bind:checked={subT}/>
+  <Checkbox bind:checked={subTask.done}/>
   <Label
     for="subtask"
-    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 {subT ? "line-through text-gray-500 hover:text-white" : ""}"
+    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 {subTask.done ? "line-through text-gray-500 hover:text-white" : ""}"
   >
-    sub task
+    {subTask.name}
   </Label>
 </div>

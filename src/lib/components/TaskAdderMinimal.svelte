@@ -9,19 +9,42 @@
   import ScrollArea from "./ui/scroll-area/scroll-area.svelte";
   import { superForm } from "sveltekit-superforms";
   import * as Tooltip from "$lib/components/ui/tooltip";
+  import stateManager from "@/stores/stateManager";
 
   export let taskAdderForm;
+  export let categoryId: number;
+
+
   const { form, enhance, message } = superForm(taskAdderForm, {
     dataType: "json",
+    warnings: {
+      duplicateId: false
+    }
   });
+
+  $: if ($message) {
+    stateManager.addTask($message.task[0])
+    if($message.newSub) {
+      console.log("🚀 ~ newSub:", $message.newSub)
+      for (const subtask of $message.newSub) {
+        console.log("🚀 ~ subtask:", subtask)
+        stateManager.addSubTask(subtask)
+      }
+    }
+  }
+
   $: $form.task_name = "";
+
   $: $form.description = "";
   $: $form.subtasks = ["", ""];
+  $: $form.category_id = categoryId;
 
   function handleInputRemover(index: number) {
-    $form.subtasks = $form.subtasks.filter(
-      (_: string, i: number) => i !== index
-    );
+    if ($form.subtasks.length > 1) {
+      $form.subtasks = $form.subtasks.filter(
+        (_: string, i: number) => i !== index
+      );
+    }
   }
 
   function handleInputAdder() {
@@ -32,17 +55,21 @@
   function handleReset() {
     $form.task_name = "";
     $form.description = "";
-    $form.subtasks = [];
+    $form.subtasks = ["", ""];
   }
   $: isSubtaskEmpty = () => {
     for (const [key, value] of Object.entries($form.subtasks)) {
       if (!value) {
-        return false
+        return false;
       }
     }
-    return true
-  }
-  $: enab = ($form.task_name && $form.subtasks.length == 0) || ($form.task_name && isSubtaskEmpty()) ? false : true;
+    return true;
+  };
+  $: enab =
+    ($form.task_name && $form.subtasks.length == 0) ||
+    ($form.task_name && isSubtaskEmpty())
+      ? false
+      : true;
 </script>
 
 <Dialog.Root>
@@ -134,15 +161,17 @@
       </div>
       <div></div>
       <Dialog.Footer>
-        <Button
-          variant="active"
-          size="rounded"
-          class="w-full p-3"
-          type="submit"
-          disabled={enab}
-        >
-          Create Task
-        </Button>
+        <Dialog.Close class="w-full" disabled={enab}>
+          <Button
+            variant="active"
+            size="rounded"
+            class="w-full p-3"
+            type="submit"
+            disabled={enab}
+          >
+            Create Task
+          </Button>
+        </Dialog.Close>
       </Dialog.Footer>
     </form>
   </Dialog.Content>

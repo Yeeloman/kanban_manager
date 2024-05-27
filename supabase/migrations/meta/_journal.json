@@ -43,6 +43,20 @@
       "when": 1716495091764,
       "tag": "0005_little_namorita",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1716730032551,
+      "tag": "0006_colossal_molly_hayes",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1716764130029,
+      "tag": "0007_smiling_hiroim",
+      "breakpoints": true
     }
   ]
 }

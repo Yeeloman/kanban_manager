@@ -8,6 +8,8 @@
   export let taskEditorForm;
   export let taskDisplayerForm;
   export let category;
+  export let boardId;
+
 </script>
 
 <div class="flex flex-col items-center space-y-5">
@@ -25,11 +27,11 @@
           <div
             class="flex justify-center items-center dark:bg-dark_theme-back p-3 bg-slate-100 rounded-lg"
           >
-            <Task {taskDisplayerForm} {taskEditorForm} {task}/>
+            <Task  {taskDisplayerForm} {taskEditorForm} {task} {boardId}/>
           </div>
         {/each}
         <div class="flex justify-center items-center rounded-lg w-full">
-          <TaskAdderMinimal {taskAdderForm} />
+          <TaskAdderMinimal {taskAdderForm} categoryId={category.id} />
         </div>
       </div>
     </ScrollArea>

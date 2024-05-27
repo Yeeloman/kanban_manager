@@ -1,4 +1,5 @@
 import { writable, type Writable } from "svelte/store";
+import { get as getStoreValue } from "svelte/store";
 
 export interface Subtask {
     id: number;
@@ -52,6 +53,7 @@ export interface Board {
 interface StateManager extends Writable<Board[]> {
     addBoard: (board: Board) => void;
     updateActiveStatus: (id: number) => void;
+    getActiveBoard: () => Board | undefined;
     addTask: (newTask: Task) => void;
     addSubTask: (newSub: Subtask) => void;
 }
@@ -71,6 +73,11 @@ const createManager = (): StateManager => {
             )
         );
     };
+
+    const getActiveBoard = (): Board | undefined => {
+        const boards = getStoreValue(stateManager);
+        return boards.find(board => board.active === true);
+    }
 
 
     const addTask = (newTask: Task) => {
@@ -122,8 +129,9 @@ const createManager = (): StateManager => {
         set,
         addBoard,
         updateActiveStatus,
+        getActiveBoard,
         addTask,
-        addSubTask
+        addSubTask,
     };
 };
 

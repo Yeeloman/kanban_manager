@@ -10,13 +10,24 @@
   import { superForm } from "sveltekit-superforms";
   export let boardEditorForm;
   import * as Tooltip from "$lib/components/ui/tooltip";
+  import { crntBoard } from "@/stores/boardsStore";
 
   const { form, enhance, errors } = superForm(boardEditorForm, {
     dataType: "json",
   });
 
-  $: $form.edit_bcolumns = ["", ""];
-
+  function edit() {
+    $form.boardId = $crntBoard?.id;
+    $form.edit_bname = $crntBoard?.boardName;
+    $form.edit_bcolumns = [];
+    // $form.categoryIds = [];
+    $crntBoard?.category.forEach((cat) => {
+      $form.edit_bcolumns.push(cat.categoryName);
+    });
+    $crntBoard?.category.forEach((cat) => {
+      $form.categoryIds.push(cat.id);
+    });
+  }
   function handleInputRemover(index: number) {
     if ($form.edit_bcolumns.length > 1) {
       $form.edit_bcolumns = $form.edit_bcolumns.filter(
@@ -51,6 +62,7 @@
       variant="active"
       size="rounded"
       class="px-[12px] py-[12px] font-bold"
+      on:click={edit}
     >
       <Edit />
     </Button>
@@ -92,13 +104,6 @@
           </Tooltip.Content>
         </Tooltip.Root>
         <ScrollArea class="w-full h-[150px]">
-          {#if $form.edit_bcolumns.length === 0}
-            <div
-              class="flex justify-center items-center text-gray-300 font-semibold opacity-40"
-            >
-              No Columns are available
-            </div>
-          {/if}
           {#each $form.edit_bcolumns as input, index}
             <div class="flex justify-center items-center gap-1">
               <Input type="text" bind:value={input} name={`input-${index}`} />
@@ -122,10 +127,7 @@
       </Button>
       <Dialog.Footer>
         <!-- * footer of the dialog -->
-        <Dialog.Close
-          class="w-full"
-          disabled={enab}
-          >
+        <Dialog.Close class="w-full" disabled={enab}>
           <Button
             variant="active"
             size="rounded"

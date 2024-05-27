@@ -86,3 +86,13 @@ export const setActiveBoard = async (boardId: number) => {
         .where(eq(dashBoardTable.id, boardId))
         .returning()
 };
+
+export const editBoardName = async (boardId: number, name: string) => {
+    return await db
+        .update(dashBoardTable)
+        .set({
+            boardName: name
+        })
+        .where(eq(dashBoardTable.id, boardId))
+        .returning()
+}

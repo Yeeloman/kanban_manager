@@ -58,7 +58,7 @@
           <h2 class="truncate w-full">{task.name}</h2>
         </Button>
       </Dialog.Trigger>
-      <div class="ml-2">
+      <div class="">
         <CercleProgressBar progress={0.9}>
           <h1 slot="tasks" class="text-dark_theme-text font-bold text-[10px]">
             90%
@@ -116,7 +116,7 @@
               </Popover.Content>
             </Popover.Root>
           </Dialog.Title>
-          <Dialog.Description>SubTasks:</Dialog.Description>
+          <Dialog.Description>{task.description}</Dialog.Description>
         </Dialog.Header>
         <ScrollArea
           class="w-full h-[50%] bg-white rounded-lg p-2 dark:bg-dark_theme-front"

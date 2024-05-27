@@ -2,8 +2,8 @@ import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { boardAdderSchema, boardEditorSchema, taskAdderSchema, taskDisplayerSchema, taskEditorSchema } from "@/FormSchema/FormSchema";
 import type { Actions } from './$types';
-import { createDashBoard, getActiveBoard, getAllBoards, getBoardById, setActiveBoard } from '@/db/dashBoardQuiries.server';
-import { createCategory, createCategoryHelper } from '@/db/ColumnsQuiries.server';
+import { createDashBoard, editBoardName, getActiveBoard, getAllBoards, getBoardById, setActiveBoard } from '@/db/dashBoardQuiries.server';
+import { createCategory, createCategoryHelper, updateCategoryName } from '@/db/ColumnsQuiries.server';
 import { createTask } from '@/db/tasksQuiries.server';
 import { createSubTask, createSubTaskHelper } from '@/db/subTasksQuiries.server';
 
@@ -61,12 +61,33 @@ export const actions: Actions = {
     edit: async ({ request }: { request: Request }) => {
         const boardEditorForm = await superValidate(request, zod(boardEditorSchema));
 
+        let changes = {
+            board: {},
+            categories: {}
+        }
         if (!boardEditorForm.valid) {
             return fail(400, {
                 boardEditorForm
             });
         }
-        return message(boardEditorForm, boardEditorForm.data.edit_bname)
+        try {
+            const {
+                edit_bname,
+                edit_bcolumns,
+                boardId,
+                categoryIds
+            } = boardEditorForm.data
+
+            changes.board =await editBoardName(boardId, edit_bname)
+            if (edit_bcolumns) {
+                changes.categories = await updateCategoryName(categoryIds, edit_bcolumns)
+            }
+
+            return message(boardEditorForm, changes)
+        } catch (e) {
+            console.log("Error in edit board: ", e)
+            return fail(400, boardEditorForm)
+        }
     },
 
     addTask: async ({ request }: { request: Request }) => {

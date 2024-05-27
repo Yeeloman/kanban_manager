@@ -7,13 +7,13 @@
   import { sideBarStatus } from "@/stores/Status";
   import stateManager from "@/stores/stateManager";
   import { enhance } from '$app/forms';
-  import { crntBoard } from "@/stores/boardsStore";
+  import { crntBoard } from '@/stores/boardsStore';
+
   export let boardAdderForm;
 
   function addBoard(event) {
     stateManager.addBoard(event.detail);
   }
-
   $: allBoards = $stateManager;
 </script>
 
@@ -30,7 +30,10 @@
           action="?/activateBoard"
           method="POST"
           class="w-ful"
-          on:submit|preventDefault={()=>stateManager.updateActiveStatus(board.id)}
+          on:submit|preventDefault={()=>{
+            stateManager.updateActiveStatus(board.id)
+            $crntBoard = stateManager.getActiveBoard()
+            }}
           use:enhance
         >
           <input type="hidden" name="board" value={JSON.stringify(board)} />

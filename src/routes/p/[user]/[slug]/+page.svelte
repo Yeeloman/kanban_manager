@@ -7,8 +7,8 @@
   import showSide from "$assets/icon-show-sidebar.svg";
   import Button from "@/components/ui/button/button.svelte";
   import stateManager from "@/stores/stateManager.js";
-  import { onMount, setContext } from "svelte";
-
+  import { onMount } from "svelte";
+  import { crntBoard } from "@/stores/boardsStore.js";
   export let data;
   const {
     boardAdderForm,
@@ -21,7 +21,11 @@
   const { allBoards } = data;
 
 
-  onMount(() => stateManager.set(allBoards));
+
+  onMount(() => {
+    stateManager.set(allBoards)
+    $crntBoard = stateManager.getActiveBoard()
+  });
 
 </script>
 

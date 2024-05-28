@@ -21,10 +21,9 @@
   const { allBoards } = data;
 
 
-
   onMount(() => {
     stateManager.set(allBoards)
-    $crntBoard = stateManager.getActiveBoard()
+    crntBoard.set(stateManager.getActiveBoard())
   });
 
 </script>

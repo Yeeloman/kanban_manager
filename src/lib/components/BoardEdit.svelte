@@ -11,27 +11,42 @@
   export let boardEditorForm;
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { crntBoard } from "@/stores/boardsStore";
+  import stateManager from "@/stores/stateManager";
 
-  const { form, enhance, errors } = superForm(boardEditorForm, {
+  const { form, enhance, message } = superForm(boardEditorForm, {
     dataType: "json",
   });
+
+  $: if ($message) {
+    stateManager.editBoard($message.board[0])
+    if ($message.categories) {
+      stateManager.editCategory($message.categories)
+    }
+    crntBoard.set(stateManager.getActiveBoard())
+  }
 
   function edit() {
     $form.boardId = $crntBoard?.id;
     $form.edit_bname = $crntBoard?.boardName;
     $form.edit_bcolumns = [];
-    // $form.categoryIds = [];
+    $form.categoryIds = [];
+
     $crntBoard?.category.forEach((cat) => {
       $form.edit_bcolumns.push(cat.categoryName);
-    });
-    $crntBoard?.category.forEach((cat) => {
       $form.categoryIds.push(cat.id);
     });
   }
+
   function handleInputRemover(index: number) {
     if ($form.edit_bcolumns.length > 1) {
       $form.edit_bcolumns = $form.edit_bcolumns.filter(
         (_: string, i: number) => i !== index
+      );
+      $form.categoryIds = $form.categoryIds.filter(
+        (_: string, i: number) => i !== index
+      );
+      $form.categoryObj = $form.categoryObj.filter(
+        (_: {id:number, name:string}, i: number) => i !== index
       );
     }
   }
@@ -39,6 +54,9 @@
   function handleInputAdder() {
     $form.edit_bcolumns = [...$form.edit_bcolumns, ""];
     $form.edit_bcolumns = $form.edit_bcolumns;
+
+    $form.categoryIds = [...$form.categoryIds, 0]
+    $form.categoryIds = $form.categoryIds
   }
 
   $: isTaskEmpty = () => {

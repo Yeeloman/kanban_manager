@@ -14,7 +14,6 @@
   function addBoard(event) {
     stateManager.addBoard(event.detail);
   }
-  $: allBoards = $stateManager;
 </script>
 
 {#if $sideBarStatus}
@@ -23,9 +22,9 @@
   >
     <div>
       <div class="text-gray-500 font-semilight p-5">
-        All Boards ({allBoards.length})
+        All Boards ({$stateManager.length})
       </div>
-      {#each allBoards as board}
+      {#each $stateManager as board}
         <form
           action="?/activateBoard"
           method="POST"

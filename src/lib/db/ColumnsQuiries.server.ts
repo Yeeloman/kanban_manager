@@ -1,4 +1,4 @@
-import { SQL, inArray, sql } from 'drizzle-orm';
+import { SQL, inArray, sql, eq } from 'drizzle-orm';
 import db from '@/db/db.server';
 import type { Category } from './schemaTypes';
 import { categoriesTable } from './schema';
@@ -10,22 +10,37 @@ export const createCategory = async (category: Category[]) => {
         .returning()
 }
 
-export const createCategoryHelper = (categories: string[], boardId: number) => {
-    let categoriesObj = categories.map((categoryName) => ({
+export const createCategoryHelper = (categories: string[], boardId: number, categoriesId?: number[]) => {
+    let categoriesObj = categories.map((categoryName, index) => ({
+        id: categoriesId?.[index] ?? undefined,
         categoryName: categoryName,
         boardId: boardId
     }));
     return categoriesObj;
 }
 
-export const updateCategoryName = async (categoryIds: number[], categoryNames: string[]) => {
+export const updateCategory = async (cat: {id:number, name:string}) => {
+    return await db
+        .update(categoriesTable)
+        .set({categoryName: cat.name})
+        .where(eq(categoriesTable.id, cat.id))
+}
+
+export const updateCategoryName = async (categories: {
+    id: number,
+    categoryName: string,
+    boardId: number
+}[]) => {
     const sqlChunks: SQL[] = [];
     sqlChunks.push(sql`(case`);
-    categoryIds.forEach((categoryId, index) => {
-        sqlChunks.push(sql`when ${categoriesTable.id} = ${categoryId} then ${categoryNames[index]}`);
+    categories.forEach((category) => {
+        sqlChunks.push(sql`when ${categoriesTable.id} = ${category.id} then ${category.categoryName}`);
     })
     sqlChunks.push(sql`end)`);
     const finalSql: SQL = sql.join(sqlChunks, sql.raw(' '));
+    const categoryIds = categories.map((category) => {
+        return category.id
+    })
     return await db
         .update(categoriesTable)
         .set({ categoryName: finalSql })

@@ -54,8 +54,7 @@
     return true;
   };
   $: enab =
-    ($Aform.board_name && $Aform.board_columns.length == 0) ||
-    ($Aform.board_name && isTaskEmpty())
+    ($Aform.board_name && isTaskEmpty() && $Aform.board_columns.length >= 1)
       ? false
       : true;
 </script>
@@ -104,7 +103,7 @@
               <span class="text-purp_manager-def font-bold text-lg">*</span>
             </Tooltip.Trigger>
             <Tooltip.Content class="bg-slate-100 dark:bg-dark_theme-back">
-              <p>A task can't be empty</p>
+              <p>A Category can't be empty</p>
             </Tooltip.Content>
           </Tooltip.Root>
         <ScrollArea class="w-full h-[150px]">

@@ -23,8 +23,18 @@ export interface Category {
     boardId: number;
     tasks: Task[];
 }
+export interface miniCategory {
+    id: number;
+    categoryName: string;
+    boardId: number;
+}
 
-
+export interface miniBoard {
+    id: number,
+    boardName: string,
+    active: boolean,
+    userId: string,
+}
 export interface Board {
     id: number;
     active: boolean | null;
@@ -52,8 +62,13 @@ export interface Board {
 
 interface StateManager extends Writable<Board[]> {
     addBoard: (board: Board) => void;
+    editBoard: (editBoard: miniBoard) => void;
+
+    editCategory: (editCategories: miniCategory[]) => void;
+
     updateActiveStatus: (id: number) => void;
     getActiveBoard: () => Board | undefined;
+
     addTask: (newTask: Task) => void;
     addSubTask: (newSub: Subtask) => void;
 }
@@ -63,8 +78,18 @@ const createManager = (): StateManager => {
 
     const addBoard = (board: Board) => {
         update(boards => [...boards, board]);
-
     };
+
+    const editBoard = (editBoard: miniBoard) => {
+        update(boards => {
+            return boards.map(board => {
+                if(board.id === editBoard.id) {
+                    board.boardName = editBoard.boardName
+                }
+                return board
+            })
+        })
+    }
 
     const updateActiveStatus = (id: number) => {
         update(boards =>
@@ -79,6 +104,26 @@ const createManager = (): StateManager => {
         return boards.find(board => board.active === true);
     }
 
+
+    const editCategory = (categories: miniCategory[]) => {
+        update(boards => {
+            return boards.map(board => {
+                return {
+                    ...board,
+                    category: board.category.map(cat => {
+                        const editCat = categories.find(editCat => editCat.id === cat.id);
+                        if (editCat) {
+                            return {
+                                ...cat,
+                                categoryName: editCat.categoryName
+                            };
+                        }
+                        return cat;
+                    })
+                };
+            });
+        });
+    }
 
     const addTask = (newTask: Task) => {
         update(boards => {
@@ -128,6 +173,8 @@ const createManager = (): StateManager => {
         update,
         set,
         addBoard,
+        editBoard,
+        editCategory,
         updateActiveStatus,
         getActiveBoard,
         addTask,

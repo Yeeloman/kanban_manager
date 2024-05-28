@@ -6,7 +6,12 @@ import { createDashBoard, editBoardName, getActiveBoard, getAllBoards, getBoardB
 import { createCategory, createCategoryHelper, updateCategoryName } from '@/db/ColumnsQuiries.server';
 import { createTask } from '@/db/tasksQuiries.server';
 import { createSubTask, createSubTaskHelper } from '@/db/subTasksQuiries.server';
+import type { miniBoard, miniCategory } from '@/stores/stateManager';
 
+interface Changes {
+    board: Record<string, any>,
+    categories: miniCategory[],
+}
 
 export const load = (async () => {
     const boardAdderForm = await superValidate(zod(boardAdderSchema));
@@ -61,9 +66,9 @@ export const actions: Actions = {
     edit: async ({ request }: { request: Request }) => {
         const boardEditorForm = await superValidate(request, zod(boardEditorSchema));
 
-        let changes = {
+        let changes: Changes = {
             board: {},
-            categories: {}
+            categories: []
         }
         if (!boardEditorForm.valid) {
             return fail(400, {
@@ -75,14 +80,27 @@ export const actions: Actions = {
                 edit_bname,
                 edit_bcolumns,
                 boardId,
-                categoryIds
+                categoryIds,
             } = boardEditorForm.data
 
-            changes.board =await editBoardName(boardId, edit_bname)
-            if (edit_bcolumns) {
-                changes.categories = await updateCategoryName(categoryIds, edit_bcolumns)
+            changes.board = await editBoardName(boardId, edit_bname)
+            const catArr = await createCategoryHelper(edit_bcolumns, boardId, categoryIds)
+            const createCatArr = catArr.filter(item => item.id === 0);
+            if (createCatArr.length > 0) {
+                const obj = createCatArr.map((cat) => ({
+                    boardId: cat.boardId,
+                    categoryName: cat.categoryName
+                }))
+                const createdCat = await createCategory(obj)
+                changes.categories.push(...createdCat);
+            }
+            const updateCatArrFiltered = catArr.filter(item => item.id !== undefined) as { id: number; categoryName: string; boardId: number; }[];
+            if (updateCatArrFiltered.length > 0) {
+                const createdCat = await updateCategoryName(updateCatArrFiltered)
+                changes.categories.push(...createdCat);
             }
 
+            console.log("🚀 ~ edit: ~ changes:", changes)
             return message(boardEditorForm, changes)
         } catch (e) {
             console.log("Error in edit board: ", e)

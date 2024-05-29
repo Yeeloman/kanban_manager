@@ -4,8 +4,8 @@ import { boardAdderSchema, boardEditorSchema, taskAdderSchema, taskDisplayerSche
 import type { Actions } from './$types';
 import { createDashBoard, editBoardName, getActiveBoard, getAllBoards, getBoardById, setActiveBoard } from '@/db/dashBoardQuiries.server';
 import { createCategory, createCategoryHelper, deleteCategoryById, updateCategoryName } from '@/db/ColumnsQuiries.server';
-import { createTask } from '@/db/tasksQuiries.server';
-import { createSubTask, createSubTaskHelper } from '@/db/subTasksQuiries.server';
+import { createTask, updateTask } from '@/db/tasksQuiries.server';
+import { createSubTask, createSubTaskHelper, updateSubtask } from '@/db/subTasksQuiries.server';
 import type { miniBoard, miniCategory } from '@/stores/stateManager';
 
 interface Changes {
@@ -171,14 +171,35 @@ export const actions: Actions = {
 
     displayTask: async ({ request }: { request: Request }) => {
         const taskDisplayerForm = await superValidate(request, zod(taskDisplayerSchema));
-        console.log("🚀 ~ displayTask: ~ taskDisplayerForm:", taskDisplayerForm)
 
         if (!taskDisplayerForm.valid) {
             return fail(400, {
                 taskDisplayerForm
             });
         }
-        return message(taskDisplayerForm, "task added")
+        try {
+            const {
+                status,
+                categoryId,
+                taskId,
+                subtasks,
+            } = taskDisplayerForm.data;
+
+            const updatedTask = await updateTask({
+                categoryId: categoryId,
+                id: taskId,
+                status: status
+            })
+
+            if (subtasks.length > 0) {
+                await updateSubtask(subtasks);
+            }
+
+            return message(taskDisplayerForm, updatedTask)
+
+        } catch (e) {
+            console.log('Error in displaaying the task: ', e)
+        }
     },
 
     activateBoard: async ({ request }: { request: Request }) => {

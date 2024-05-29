@@ -28,9 +28,13 @@ export const taskEditorSchema = z.object({
 });
 
 export const taskDisplayerSchema = z.object({
-    subtasks: z.array(z.boolean()),
     status: z.enum(["TODO", "DOING", "DONE"]).default("TODO"),
-    crnt_status: z.string()
+    categoryId: z.number(),
+    taskId: z.number(),
+    subtasks: z.array(z.object({
+        id: z.number(),
+        done: z.boolean()
+    })),
 });
 
 export const signInSchema = z.object({

@@ -1,3 +1,4 @@
+import type { STATUS } from "@/db/schemaTypes";
 import { writable, type Writable } from "svelte/store";
 import { get as getStoreValue } from "svelte/store";
 
@@ -72,6 +73,8 @@ interface StateManager extends Writable<Board[]> {
     getActiveBoard: () => Board | undefined;
 
     addTask: (newTask: Task) => void;
+    updateTask: (id: number, categoryId: number, status: STATUS) => void;
+
     addSubTask: (newSub: Subtask) => void;
 }
 
@@ -170,6 +173,49 @@ const createManager = (): StateManager => {
         });
     };
 
+    const updateTask = (id: number, categoryId: number, status: STATUS) => {
+        //@ts-ignore
+        update(boards => {
+            return boards.map(board => {
+                let taskToMove: Task | undefined;
+
+                const updatedCat = board.category.map(cat => {
+                    const filteredTasks = cat.tasks.filter(task => {
+                        if (task.id === id) {
+                            taskToMove = task
+                            return false
+                        }
+                        return true
+                    })
+                    return {
+                        ...cat,
+                        tasks: filteredTasks
+                    }
+                })
+
+                if (taskToMove) {
+                    taskToMove.categoryId = categoryId
+                    taskToMove.status = status
+                    const newCategories = updatedCat.map(cat => {
+                        if (cat.id === categoryId) {
+                            return {
+                                ...cat,
+                                tasks: [...cat.tasks, taskToMove]
+                            };
+                        }
+                        return cat;
+                    });
+                    return {
+                        ...board,
+                        category: newCategories
+                    }
+                }
+                return board
+            })
+
+        })
+    }
+
     const addSubTask = (newSub: Subtask) => {
         update(boards => {
             return boards.map(board => {
@@ -206,6 +252,7 @@ const createManager = (): StateManager => {
         updateActiveStatus,
         getActiveBoard,
         addTask,
+        updateTask,
         addSubTask,
     };
 };

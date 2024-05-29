@@ -17,13 +17,14 @@
   export let task;
   export let boardId;
 
-  const { form, enhance } = superForm(taskDisplayerForm, {
+  const { form, enhance, message } = superForm(taskDisplayerForm, {
     dataType: "json",
     warnings: {
       duplicateId: false,
     },
   });
 
+  $form.taskId = task.id
   const statss = ["TODO", "DOING", "DONE"];
 
   const STATUS = {
@@ -40,16 +41,23 @@
       color: "bg-green-500",
     },
   };
-  let crnt_status = STATUS.TODO;
+  //@ts-ignore
+  let crnt_status = STATUS[task.status]
+
 
   const changeStatus = (stat: { name: string; color: string }) => {
     crnt_status = stat;
+    $form.status = stat.name
   };
+
+  $: if ($message) {
+    stateManager.updateTask($message[0].id, $message[0].categoryId, $message[0].status)
+  }
 </script>
 
 <div class="w-full h-full">
   <Dialog.Root>
-    <div class="flex justify-center items-center hover:text-purp_manager-def">
+    <div class="flex justify-center items-center hover:text-purp_manager-def ">
       <Dialog.Trigger class="w-full">
         <Button
           variant="taskCard"
@@ -58,7 +66,7 @@
           <h2 class="truncate w-full">{task.name}</h2>
         </Button>
       </Dialog.Trigger>
-      <div class="">
+      <div class="w-1/4">
         <CercleProgressBar progress={0.9}>
           <h1 slot="tasks" class="text-dark_theme-text font-bold text-[10px]">
             90%
@@ -93,7 +101,7 @@
                     class="flex justify-between w-28"
                     on:click={() => changeStatus(STATUS.TODO)}
                   >
-                    <div class="w-5 h-5 bg-red-500"></div>
+                    <div class="w-5 h-5 {STATUS.TODO.color}"></div>
                     <p>TODO</p>
                   </Button>
                   <Button
@@ -101,7 +109,7 @@
                     class="flex justify-between w-28"
                     on:click={() => changeStatus(STATUS.DOING)}
                   >
-                    <div class="w-5 h-5 bg-orange-500"></div>
+                    <div class="w-5 h-5 {STATUS.DOING.color}"></div>
                     <p>DOING</p>
                   </Button>
                   <Button
@@ -109,7 +117,7 @@
                     class="flex justify-between w-28"
                     on:click={() => changeStatus(STATUS.DONE)}
                   >
-                    <div class="w-5 h-5 bg-green-500"></div>
+                    <div class="w-5 h-5 {STATUS.DONE.color}"></div>
                     <p>DONE</p>
                   </Button>
                 </Popover.Close>
@@ -122,14 +130,14 @@
           class="w-full h-[50%] bg-white rounded-lg p-2 dark:bg-dark_theme-front"
         >
           {#each task.subtasks as subTask}
-            <SubTask {subTask} />
+            <SubTask {subTask} formSub={$form.subtasks}/>
           {/each}
         </ScrollArea>
         <div class="h-1"></div>
         <div class="w-full">
           <Select.Root
             onSelectedChange={(v) => {
-              $form.crnt_status = v?.value;
+              $form.categoryId = v?.value;
             }}
           >
             <Select.Trigger
@@ -145,26 +153,26 @@
                 {#each $stateManager as board}
                   {#if board.id === boardId}
                     {#each board.category as cat}
-                      <Select.Item bind:value={cat}>
+                      <Select.Item bind:value={cat.id}>
                         {cat.categoryName}
                       </Select.Item>
                     {/each}
                   {/if}
                 {/each}
               </Select.Group>
-              <Select.Input hidden bind:value={$form.crnt_status} />
+              <Select.Input hidden bind:value={$form.categoryId} />
               <div class="w-full h-2"></div>
             </Select.Content>
           </Select.Root>
         </div>
         <Dialog.Footer class="flex items-center justify-between">
-          <Dialog.Close disabled={$form.crnt_status ? false : true}>
+          <Dialog.Close disabled={$form.categoryId ? false : true}>
             <Button
               type="submit"
               variant="ghost"
               size="rounded"
               class="hover:text-purp_manager-def p-4 font-bold"
-              disabled={$form.crnt_status ? false : true}
+              disabled={$form.categoryId ? false : true}
             >
               Save
             </Button>

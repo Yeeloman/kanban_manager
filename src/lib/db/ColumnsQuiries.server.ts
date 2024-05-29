@@ -2,6 +2,7 @@ import { SQL, inArray, sql, eq } from 'drizzle-orm';
 import db from '@/db/db.server';
 import type { Category } from './schemaTypes';
 import { categoriesTable } from './schema';
+import type { miniCategory } from '@/stores/stateManager';
 
 export const createCategory = async (category: Category[]) => {
     return await db
@@ -46,4 +47,12 @@ export const updateCategoryName = async (categories: {
         .set({ categoryName: finalSql })
         .where(inArray(categoriesTable.id, categoryIds))
         .returning();
+}
+
+
+export const deleteCategoryById = async (categoryIds: number[]) => {
+    return await db
+        .delete(categoriesTable)
+        .where(inArray(categoriesTable.id, categoryIds))
+        .returning()
 }

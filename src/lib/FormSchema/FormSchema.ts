@@ -11,6 +11,7 @@ export const boardEditorSchema = z.object({
     edit_bcolumns: z.array(z.string().min(1, "Task can not be empty")),
     boardId: z.number(),
     categoryIds: z.array(z.number()),
+    deleteCatIds: z.array(z.number()),
 });
 
 export const taskAdderSchema = z.object({

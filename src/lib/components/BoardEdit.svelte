@@ -18,14 +18,17 @@
   });
 
   $: if ($message) {
-    stateManager.editBoard($message.board[0])
+    stateManager.editBoard($message.board[0]);
     if ($message.categories) {
-      stateManager.editCategory($message.categories)
+      stateManager.editCategory($message.categories);
     }
     if ($message.addedCategories) {
-      stateManager.addCategory($message.addedCategories)
+      stateManager.addCategory($message.addedCategories);
     }
-    crntBoard.set(stateManager.getActiveBoard())
+    if ($message.deletedCategories) {
+      stateManager.deleteCategory($message.deletedCategories)
+    }
+    crntBoard.set(stateManager.getActiveBoard());
   }
 
   function edit() {
@@ -33,6 +36,7 @@
     $form.edit_bname = $crntBoard?.boardName;
     $form.edit_bcolumns = [];
     $form.categoryIds = [];
+    $form.deleteCatIds = [];
 
     $crntBoard?.category.forEach((cat) => {
       $form.edit_bcolumns.push(cat.categoryName);
@@ -46,10 +50,16 @@
         (_: string, i: number) => i !== index
       );
       $form.categoryIds = $form.categoryIds.filter(
-        (_: string, i: number) => i !== index
-      );
-      $form.categoryObj = $form.categoryObj.filter(
-        (_: {id:number, name:string}, i: number) => i !== index
+        // (_: string, i: number) => i !== index
+        (id: number, i: number) => {
+          if (i === index) {
+            if (id !== 0) {
+              $form.deleteCatIds.push(id);
+            }
+            return false;
+          }
+          return true;
+        }
       );
     }
   }
@@ -58,8 +68,8 @@
     $form.edit_bcolumns = [...$form.edit_bcolumns, ""];
     $form.edit_bcolumns = $form.edit_bcolumns;
 
-    $form.categoryIds = [...$form.categoryIds, 0]
-    $form.categoryIds = $form.categoryIds
+    $form.categoryIds = [...$form.categoryIds, 0];
+    $form.categoryIds = $form.categoryIds;
   }
 
   $: isTaskEmpty = () => {

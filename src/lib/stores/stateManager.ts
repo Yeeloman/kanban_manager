@@ -66,6 +66,7 @@ interface StateManager extends Writable<Board[]> {
 
     addCategory: (addedCategory: miniCategory[]) => void;
     editCategory: (editCategories: miniCategory[]) => void;
+    deleteCategory: (deletedCategories: number[]) => void;
 
     updateActiveStatus: (id: number) => void;
     getActiveBoard: () => Board | undefined;
@@ -139,6 +140,17 @@ const createManager = (): StateManager => {
         });
     }
 
+    const deleteCategory = (deletedCategory: number[]) => {
+        update(boards => {
+            return boards.map(board => {
+                return {
+                    ...board,
+                    category: board.category.filter(cat => !deletedCategory.includes(cat.id))
+                };
+            });
+        });
+    }
+
     const addTask = (newTask: Task) => {
         update(boards => {
             return boards.map(board => {
@@ -190,6 +202,7 @@ const createManager = (): StateManager => {
         editBoard,
         addCategory,
         editCategory,
+        deleteCategory,
         updateActiveStatus,
         getActiveBoard,
         addTask,

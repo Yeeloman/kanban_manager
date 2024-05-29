@@ -3,7 +3,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { boardAdderSchema, boardEditorSchema, taskAdderSchema, taskDisplayerSchema, taskEditorSchema } from "@/FormSchema/FormSchema";
 import type { Actions } from './$types';
 import { createDashBoard, editBoardName, getActiveBoard, getAllBoards, getBoardById, setActiveBoard } from '@/db/dashBoardQuiries.server';
-import { createCategory, createCategoryHelper, updateCategoryName } from '@/db/ColumnsQuiries.server';
+import { createCategory, createCategoryHelper, deleteCategoryById, updateCategoryName } from '@/db/ColumnsQuiries.server';
 import { createTask } from '@/db/tasksQuiries.server';
 import { createSubTask, createSubTaskHelper } from '@/db/subTasksQuiries.server';
 import type { miniBoard, miniCategory } from '@/stores/stateManager';
@@ -12,6 +12,7 @@ interface Changes {
     board: Record<string, any>,
     addedCategories: miniCategory[],
     categories: miniCategory[],
+    deletedCategories: number[]
 }
 
 export const load = (async () => {
@@ -70,7 +71,8 @@ export const actions: Actions = {
         let changes: Changes = {
             board: {},
             addedCategories: [],
-            categories: []
+            categories: [],
+            deletedCategories: [],
         }
         if (!boardEditorForm.valid) {
             return fail(400, {
@@ -83,6 +85,7 @@ export const actions: Actions = {
                 edit_bcolumns,
                 boardId,
                 categoryIds,
+                deleteCatIds
             } = boardEditorForm.data
 
             changes.board = await editBoardName(boardId, edit_bname)
@@ -102,6 +105,10 @@ export const actions: Actions = {
                 changes.categories.push(...createdCat);
             }
 
+            if (deleteCatIds.length > 0) {
+                await deleteCategoryById(deleteCatIds)
+                changes.deletedCategories = deleteCatIds;
+            }
             return message(boardEditorForm, changes)
         } catch (e) {
             console.log("Error in edit board: ", e)

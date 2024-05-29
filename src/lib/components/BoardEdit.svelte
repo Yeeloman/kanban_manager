@@ -22,6 +22,9 @@
     if ($message.categories) {
       stateManager.editCategory($message.categories)
     }
+    if ($message.addedCategories) {
+      stateManager.addCategory($message.addedCategories)
+    }
     crntBoard.set(stateManager.getActiveBoard())
   }
 

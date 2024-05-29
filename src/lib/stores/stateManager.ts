@@ -64,6 +64,7 @@ interface StateManager extends Writable<Board[]> {
     addBoard: (board: Board) => void;
     editBoard: (editBoard: miniBoard) => void;
 
+    addCategory: (addedCategory: miniCategory[]) => void;
     editCategory: (editCategories: miniCategory[]) => void;
 
     updateActiveStatus: (id: number) => void;
@@ -83,7 +84,7 @@ const createManager = (): StateManager => {
     const editBoard = (editBoard: miniBoard) => {
         update(boards => {
             return boards.map(board => {
-                if(board.id === editBoard.id) {
+                if (board.id === editBoard.id) {
                     board.boardName = editBoard.boardName
                 }
                 return board
@@ -104,6 +105,19 @@ const createManager = (): StateManager => {
         return boards.find(board => board.active === true);
     }
 
+    const addCategory = (addedCategory: miniCategory[]) => {
+        update(boards => {
+            return boards.map(board => {
+                const newCategories = addedCategory
+                    .filter(cat => cat.boardId === board.id)
+                    .map(cat => ({ ...cat, tasks: [] }));
+                return {
+                    ...board,
+                    category: [...board.category, ...newCategories]
+                }
+            })
+        })
+    }
 
     const editCategory = (categories: miniCategory[]) => {
         update(boards => {
@@ -174,6 +188,7 @@ const createManager = (): StateManager => {
         set,
         addBoard,
         editBoard,
+        addCategory,
         editCategory,
         updateActiveStatus,
         getActiveBoard,

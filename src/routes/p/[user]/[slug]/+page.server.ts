@@ -10,6 +10,7 @@ import type { miniBoard, miniCategory } from '@/stores/stateManager';
 
 interface Changes {
     board: Record<string, any>,
+    addedCategories: miniCategory[],
     categories: miniCategory[],
 }
 
@@ -68,6 +69,7 @@ export const actions: Actions = {
 
         let changes: Changes = {
             board: {},
+            addedCategories: [],
             categories: []
         }
         if (!boardEditorForm.valid) {
@@ -92,7 +94,7 @@ export const actions: Actions = {
                     categoryName: cat.categoryName
                 }))
                 const createdCat = await createCategory(obj)
-                changes.categories.push(...createdCat);
+                changes.addedCategories.push(...createdCat);
             }
             const updateCatArrFiltered = catArr.filter(item => item.id !== undefined) as { id: number; categoryName: string; boardId: number; }[];
             if (updateCatArrFiltered.length > 0) {
@@ -100,7 +102,6 @@ export const actions: Actions = {
                 changes.categories.push(...createdCat);
             }
 
-            console.log("🚀 ~ edit: ~ changes:", changes)
             return message(boardEditorForm, changes)
         } catch (e) {
             console.log("Error in edit board: ", e)

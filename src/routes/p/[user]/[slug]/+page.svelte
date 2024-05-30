@@ -7,7 +7,7 @@
   import showSide from "$assets/icon-show-sidebar.svg";
   import Button from "@/components/ui/button/button.svelte";
   import stateManager from "@/stores/stateManager.js";
-  import { onMount } from "svelte";
+  import { onMount, setContext } from "svelte";
   import { crntBoard } from "@/stores/boardsStore.js";
   export let data;
   const {
@@ -16,9 +16,11 @@
     taskAdderForm,
     taskEditorForm,
     taskDisplayerForm,
+    deleteTaskForm
   } = data.forms;
 
   const { allBoards } = data;
+  setContext('deleteTaskForm', deleteTaskForm)
 
 
   onMount(() => {

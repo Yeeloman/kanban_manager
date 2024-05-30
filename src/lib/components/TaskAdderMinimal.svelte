@@ -54,6 +54,7 @@
     $form.task_name = "";
     $form.description = "";
     $form.subtasks = ["", ""];
+    $form.category_id = categoryId
   }
   $: isSubtaskEmpty = () => {
     for (const [key, value] of Object.entries($form.subtasks)) {

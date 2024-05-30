@@ -1,10 +1,10 @@
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { boardAdderSchema, boardEditorSchema, taskAdderSchema, taskDisplayerSchema, taskEditorSchema } from "@/FormSchema/FormSchema";
+import { boardAdderSchema, boardEditorSchema, deleteTaskSchema, taskAdderSchema, taskDisplayerSchema, taskEditorSchema } from "@/FormSchema/FormSchema";
 import type { Actions } from './$types';
 import { createDashBoard, editBoardName, getAllBoards, getBoardById, setActiveBoard } from '@/db/dashBoardQuiries.server';
 import { createCategory, createCategoryHelper, deleteCategoryById, updateCategoryName } from '@/db/ColumnsQuiries.server';
-import { createTask, updateTask, updateTaskNameAndDescription } from '@/db/tasksQuiries.server';
+import { createTask, updateTask, updateTaskNameAndDescription, deleteTask } from '@/db/tasksQuiries.server';
 import { createSubTask, createSubTaskArr, createSubTaskHelper, deleteSubTask, updateSubtask, updateSubtaskName } from '@/db/subTasksQuiries.server';
 import type { miniBoard, miniCategory } from '@/stores/stateManager';
 import type { SubTask, Task } from '@/db/schemaTypes';
@@ -28,6 +28,7 @@ export const load = (async () => {
     const taskAdderForm = await superValidate(zod(taskAdderSchema));
     const taskEditorForm = await superValidate(zod(taskEditorSchema));
     const taskDisplayerForm = await superValidate(zod(taskDisplayerSchema));
+    const deleteTaskForm = await superValidate(zod(deleteTaskSchema));
 
     const allBoards = await getAllBoards();
     return {
@@ -36,7 +37,8 @@ export const load = (async () => {
             boardEditorForm,
             taskAdderForm,
             taskEditorForm,
-            taskDisplayerForm
+            taskDisplayerForm,
+            deleteTaskForm
         },
         allBoards,
     };
@@ -257,6 +259,19 @@ export const actions: Actions = {
         } catch (e) {
             console.log('Error in displaaying the task: ', e)
         }
+    },
+
+    deleteTask: async ({ request }: { request: Request }) => {
+        const deleteTaskForm = await superValidate(request, zod(deleteTaskSchema))
+        console.log("🚀 ~ deleteTask: ~ deleteTaskForm:", deleteTaskForm)
+
+        if (!deleteTaskForm.valid) {
+            fail(400, deleteTaskForm)
+        }
+
+        const { id } = deleteTaskForm.data
+        const dlTask = await deleteTask(id)
+        return message(deleteTaskForm, dlTask[0].id)
     },
 
     activateBoard: async ({ request }: { request: Request }) => {

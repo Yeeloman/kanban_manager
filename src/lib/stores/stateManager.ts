@@ -75,6 +75,7 @@ interface StateManager extends Writable<Board[]> {
     addTask: (newTask: Task) => void;
     updateTask: (id: number, categoryId: number, status: STATUS) => void;
     updateTaskNameAndDesc: (upTask: Task) => void;
+    deleteTask: (id: number) => void;
 
     addSubTask: (newSub: Subtask) => void;
     updateSubTask: (subtasks: Subtask) => void;
@@ -243,6 +244,22 @@ const createManager = (): StateManager => {
         })
     }
 
+    const deleteTask = (id: number) => {
+        update(boards => {
+            return boards.map(board => {
+                return {
+                    ...board,
+                    category: board.category.map(cat => {
+                        return {
+                            ...cat,
+                            tasks: cat.tasks.filter(task => task.id !== id)
+                        }
+                    })
+                }
+            })
+        })
+    }
+
     const addSubTask = (newSub: Subtask) => {
         update(boards => {
             return boards.map(board => {
@@ -329,6 +346,7 @@ const createManager = (): StateManager => {
         addTask,
         updateTask,
         updateTaskNameAndDesc,
+        deleteTask,
         addSubTask,
         updateSubTask,
         deleteSubTask,

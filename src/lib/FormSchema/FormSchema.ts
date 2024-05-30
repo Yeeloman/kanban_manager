@@ -28,11 +28,6 @@ export const taskEditorSchema = z.object({
     subTaskIds: z.array(z.number()).default([]),
     deletedSubs: z.array(z.number()).default([]),
     edit_subtasks: z.array(z.string()).default([]),
-    // edit_subtasks: z.array(z.object({
-    //     id: z.number(),
-    //     name: z.string(),
-    //     done: z.boolean(),
-    // }))
 });
 
 export const taskDisplayerSchema = z.object({
@@ -63,3 +58,8 @@ export const signUpSchema = z.object({
     message: "Passwords do not match",
     path: ["conf_pwd"]
 });
+
+
+export const deleteTaskSchema = z.object({
+    id: z.number(),
+})

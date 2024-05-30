@@ -189,7 +189,7 @@ function calculateProgress(subtasks: SubTask[]) {
             </Button>
           </Dialog.Close>
           <TaskEditMinimal {taskEditorForm} {task} />
-          <DeleteTaskDialog />
+          <DeleteTaskDialog {task}/>
         </Dialog.Footer>
       </form>
     </Dialog.Content>

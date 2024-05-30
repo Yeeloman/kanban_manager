@@ -33,3 +33,10 @@ export const updateTaskNameAndDescription = async (task: {
         .where(eq(tasksTable.id, task.id))
         .returning()
 };
+
+export const deleteTask = async (id: number) => {
+    return await db
+        .delete(tasksTable)
+        .where(eq(tasksTable.id, id))
+        .returning()
+};

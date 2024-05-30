@@ -28,7 +28,7 @@
         <form
           action="?/activateBoard"
           method="POST"
-          class="w-ful"
+          class="w-full"
           on:submit|preventDefault={()=>{
             stateManager.updateActiveStatus(board.id)
             $crntBoard = stateManager.getActiveBoard()

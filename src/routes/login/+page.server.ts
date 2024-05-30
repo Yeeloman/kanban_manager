@@ -64,6 +64,7 @@ export const actions: Actions = {
 
     signUp: async ({ request, cookies }: { request: Request, cookies: Cookies }) => {
         const signUpForm = await superValidate(request, zod(signUpSchema));
+        console.log("🚀 ~ signUp: ~ signUpForm:", signUpForm)
 
         if (!signUpForm.valid) {
             return fail(400, {

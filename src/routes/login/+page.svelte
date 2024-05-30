@@ -44,16 +44,25 @@
 
   function UshowErrors() {
     if ($Uerrors.username) {
-      toast($Uerrors.username[0])
+      for (const err of $Uerrors.username) {
+        toast(err)
+      }
+
     }
     if ($Uerrors.email) {
-      toast($Uerrors.email[0])
+      for (const err of $Uerrors.email) {
+        toast(err)
+      }
     }
     if ($Uerrors.password) {
-      toast($Uerrors.password[0])
+      for (const err of $Uerrors.password) {
+        toast(err)
+      }
     }
     if ($Uerrors.conf_pwd) {
-      toast($Uerrors.conf_pwd[0])
+      for (const err of $Uerrors.conf_pwd) {
+        toast(err)
+      }
     }
 
     // * reset errors

@@ -63,3 +63,6 @@ export const signUpSchema = z.object({
 export const deleteTaskSchema = z.object({
     id: z.number(),
 })
+export const deleteBoardSchema = z.object({
+    id: z.number().default(0),
+})

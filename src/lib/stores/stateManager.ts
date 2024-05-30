@@ -64,6 +64,7 @@ export interface Board {
 interface StateManager extends Writable<Board[]> {
     addBoard: (board: Board) => void;
     editBoard: (editBoard: miniBoard) => void;
+    deleteBoard: (id: number) => void;
 
     addCategory: (addedCategory: miniCategory[]) => void;
     editCategory: (editCategories: miniCategory[]) => void;
@@ -98,6 +99,10 @@ const createManager = (): StateManager => {
                 return board
             })
         })
+    }
+
+    const deleteBoard = (id: number) => {
+        update(boards => boards.filter(board => board.id !== id))
     }
 
     const updateActiveStatus = (id: number) => {
@@ -338,6 +343,7 @@ const createManager = (): StateManager => {
         set,
         addBoard,
         editBoard,
+        deleteBoard,
         addCategory,
         editCategory,
         deleteCategory,

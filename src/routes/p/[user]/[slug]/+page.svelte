@@ -16,11 +16,13 @@
     taskAdderForm,
     taskEditorForm,
     taskDisplayerForm,
-    deleteTaskForm
+    deleteTaskForm,
+    deleteBoardForm
   } = data.forms;
 
   const { allBoards } = data;
   setContext('deleteTaskForm', deleteTaskForm)
+  setContext('deleteBoardForm', deleteBoardForm)
 
 
   onMount(() => {

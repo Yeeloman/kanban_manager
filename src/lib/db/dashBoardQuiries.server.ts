@@ -96,3 +96,10 @@ export const editBoardName = async (boardId: number, name: string) => {
         .where(eq(dashBoardTable.id, boardId))
         .returning()
 }
+
+export const deleteBoard = async (id: number) => {
+    return await db
+        .delete(dashBoardTable)
+        .where(eq(dashBoardTable.id, id))
+        .returning()
+};

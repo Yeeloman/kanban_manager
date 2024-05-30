@@ -1,8 +1,8 @@
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { boardAdderSchema, boardEditorSchema, deleteTaskSchema, taskAdderSchema, taskDisplayerSchema, taskEditorSchema } from "@/FormSchema/FormSchema";
+import { boardAdderSchema, boardEditorSchema, deleteBoardSchema, deleteTaskSchema, taskAdderSchema, taskDisplayerSchema, taskEditorSchema } from "@/FormSchema/FormSchema";
 import type { Actions } from './$types';
-import { createDashBoard, editBoardName, getAllBoards, getBoardById, setActiveBoard } from '@/db/dashBoardQuiries.server';
+import { createDashBoard, deleteBoard, editBoardName, getAllBoards, getBoardById, setActiveBoard } from '@/db/dashBoardQuiries.server';
 import { createCategory, createCategoryHelper, deleteCategoryById, updateCategoryName } from '@/db/ColumnsQuiries.server';
 import { createTask, updateTask, updateTaskNameAndDescription, deleteTask } from '@/db/tasksQuiries.server';
 import { createSubTask, createSubTaskArr, createSubTaskHelper, deleteSubTask, updateSubtask, updateSubtaskName } from '@/db/subTasksQuiries.server';
@@ -29,6 +29,7 @@ export const load = (async () => {
     const taskEditorForm = await superValidate(zod(taskEditorSchema));
     const taskDisplayerForm = await superValidate(zod(taskDisplayerSchema));
     const deleteTaskForm = await superValidate(zod(deleteTaskSchema));
+    const deleteBoardForm = await superValidate(zod(deleteBoardSchema));
 
     const allBoards = await getAllBoards();
     return {
@@ -38,7 +39,8 @@ export const load = (async () => {
             taskAdderForm,
             taskEditorForm,
             taskDisplayerForm,
-            deleteTaskForm
+            deleteTaskForm,
+            deleteBoardForm
         },
         allBoards,
     };
@@ -263,7 +265,6 @@ export const actions: Actions = {
 
     deleteTask: async ({ request }: { request: Request }) => {
         const deleteTaskForm = await superValidate(request, zod(deleteTaskSchema))
-        console.log("🚀 ~ deleteTask: ~ deleteTaskForm:", deleteTaskForm)
 
         if (!deleteTaskForm.valid) {
             fail(400, deleteTaskForm)
@@ -272,6 +273,19 @@ export const actions: Actions = {
         const { id } = deleteTaskForm.data
         const dlTask = await deleteTask(id)
         return message(deleteTaskForm, dlTask[0].id)
+    },
+
+    deleteBoard: async ({ request }: { request: Request }) => {
+        const deleteBoardForm = await superValidate(request, zod(deleteBoardSchema))
+        console.log("🚀 ~ deleteBpard: ~ deleteBoardForm:", deleteBoardForm)
+
+        if (!deleteBoardForm.valid) {
+            fail(400, deleteBoardForm)
+        }
+
+        const { id } = deleteBoardForm.data
+        const dlBoard = await deleteBoard(id)
+        return message(deleteBoardForm, dlBoard[0].id)
     },
 
     activateBoard: async ({ request }: { request: Request }) => {

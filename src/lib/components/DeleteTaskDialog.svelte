@@ -7,7 +7,6 @@
   import { getContext } from "svelte";
   import { superForm } from "sveltekit-superforms";
   import stateManager from "@/stores/stateManager";
-  import { crntBoard } from "@/stores/boardsStore";
 
   export let task: any;
   const deleteTaskForm: any = getContext("deleteTaskForm");

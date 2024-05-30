@@ -53,6 +53,18 @@
   $: if ($message) {
     stateManager.updateTask($message[0].id, $message[0].categoryId, $message[0].status)
   }
+
+
+let progress = 0;
+
+$: progress = calculateProgress(task.subtasks);
+
+function calculateProgress(subtasks: SubTask[]) {
+    const total = subtasks.length;
+    const completed = subtasks.filter(subtask => subtask.done).length;
+    return total === 0 ? 0 : (completed / total) * 100;
+}
+
 </script>
 <div class="w-full h-full">
   <Dialog.Root>
@@ -66,9 +78,9 @@
         </Button>
       </Dialog.Trigger>
       <div class="w-1/4">
-        <CercleProgressBar progress={0.9}>
+        <CercleProgressBar progress={progress/100}>
           <h1 slot="tasks" class="text-dark_theme-text font-bold text-[10px]">
-            90%
+            {progress.toFixed(0)}%
           </h1>
         </CercleProgressBar>
       </div>

@@ -2,11 +2,12 @@ import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { boardAdderSchema, boardEditorSchema, taskAdderSchema, taskDisplayerSchema, taskEditorSchema } from "@/FormSchema/FormSchema";
 import type { Actions } from './$types';
-import { createDashBoard, editBoardName, getActiveBoard, getAllBoards, getBoardById, setActiveBoard } from '@/db/dashBoardQuiries.server';
+import { createDashBoard, editBoardName, getAllBoards, getBoardById, setActiveBoard } from '@/db/dashBoardQuiries.server';
 import { createCategory, createCategoryHelper, deleteCategoryById, updateCategoryName } from '@/db/ColumnsQuiries.server';
-import { createTask, updateTask } from '@/db/tasksQuiries.server';
-import { createSubTask, createSubTaskHelper, updateSubtask } from '@/db/subTasksQuiries.server';
+import { createTask, updateTask, updateTaskNameAndDescription } from '@/db/tasksQuiries.server';
+import { createSubTask, createSubTaskArr, createSubTaskHelper, deleteSubTask, updateSubtask, updateSubtaskName } from '@/db/subTasksQuiries.server';
 import type { miniBoard, miniCategory } from '@/stores/stateManager';
+import type { SubTask, Task } from '@/db/schemaTypes';
 
 interface Changes {
     board: Record<string, any>,
@@ -15,6 +16,12 @@ interface Changes {
     deletedCategories: number[]
 }
 
+interface ChangesEditTask {
+    upTask: Task[],
+    nwSub: SubTask[],
+    upSub: SubTask[],
+    dlSubIds: number[]
+}
 export const load = (async () => {
     const boardAdderForm = await superValidate(zod(boardAdderSchema));
     const boardEditorForm = await superValidate(zod(boardEditorSchema));
@@ -89,7 +96,7 @@ export const actions: Actions = {
             } = boardEditorForm.data
 
             changes.board = await editBoardName(boardId, edit_bname)
-            const catArr = await createCategoryHelper(edit_bcolumns, boardId, categoryIds)
+            const catArr = createCategoryHelper(edit_bcolumns, boardId, categoryIds)
             const createCatArr = catArr.filter(item => item.id === 0);
             if (createCatArr.length > 0) {
                 const obj = createCatArr.map((cat) => ({
@@ -160,13 +167,63 @@ export const actions: Actions = {
     editTask: async ({ request }: { request: Request }) => {
         const taskEditorForm = await superValidate(request, zod(taskEditorSchema));
 
-        console.log(taskEditorForm)
+        let changes: ChangesEditTask = {
+            upTask: [],
+            upSub: [],
+            nwSub: [],
+            dlSubIds: [],
+        };
+
         if (!taskEditorForm.valid) {
             return fail(400, {
                 taskEditorForm
             });
         }
-        return message(taskEditorForm, "task added")
+
+        try {
+            const {
+                taskId,
+                edit_tname,
+                edit_description,
+                edit_subtasks,
+                subTaskIds,
+                deletedSubs
+            } = taskEditorForm.data
+
+            const uptasks = await updateTaskNameAndDescription({
+                id: taskId,
+                name: edit_tname,
+                description: edit_description
+            })
+            changes.upTask.push(...uptasks)
+
+            const subObj = createSubTaskArr(edit_subtasks, subTaskIds, taskId)
+            const newSubs = subObj.filter(sub => sub.id === 0)
+            if (newSubs.length > 0) {
+                const subs = newSubs.map(sub => ({
+                    taskId: sub.taskId,
+                    name: sub.name
+                }))
+                const nwsub = await createSubTask(subs)
+                changes.nwSub.push(...nwsub)
+            }
+
+            const updatedSubs = subObj.filter(sub => sub.id !== 0)
+
+            if (updatedSubs.length > 0) {
+                const upsubs = await updateSubtaskName(updatedSubs)
+                changes.upSub.push(...upsubs)
+            }
+
+            if (deletedSubs.length > 0) {
+                await deleteSubTask(deletedSubs)
+                changes.dlSubIds = deletedSubs
+            }
+
+            return message(taskEditorForm, changes)
+        } catch (e) {
+            console.log('Error in editing task action: ', e)
+        }
     },
 
     displayTask: async ({ request }: { request: Request }) => {

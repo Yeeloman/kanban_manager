@@ -21,3 +21,15 @@ export const updateTask = async (task: {status: STATUS, categoryId: number, id: 
         .where(eq(tasksTable.id, task.id))
         .returning()
 };
+
+export const updateTaskNameAndDescription = async (task: {
+    id: number,
+    name: string,
+    description?: string
+}) => {
+    return await db
+        .update(tasksTable)
+        .set(task)
+        .where(eq(tasksTable.id, task.id))
+        .returning()
+};

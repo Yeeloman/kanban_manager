@@ -9,40 +9,89 @@
   import { superForm } from "sveltekit-superforms";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import ScrollArea from "./ui/scroll-area/scroll-area.svelte";
+  import stateManager from "@/stores/stateManager";
 
   export let taskEditorForm;
-  const { form, enhance, message, errors } = superForm(taskEditorForm, {
+  export let task: any;
+
+  const { form, enhance, message } = superForm(taskEditorForm, {
     dataType: "json",
   });
-  $: $form.edit_tname = "";
-  $: $form.edit_description = "";
-  $: $form.edit_subtasks = ["", ""];
+
+  $: if ($message) {
+
+    if ($message.upTask) {
+      stateManager.updateTaskNameAndDesc($message.upTask[0])
+    }
+
+    if ($message.nwSub) {
+      for (const sub of $message.nwSub) {
+        stateManager.addSubTask(sub)
+      }
+    }
+
+    if ($message.upSub) {
+      for (const sub of $message.upSub) {
+        stateManager.updateSubTask(sub)
+      }
+    }
+
+    if ($message.dlSubIds) {
+      stateManager.deleteSubTask($message.dlSubIds)
+    }
+  }
 
   function handleInputRemover(index: number) {
-    $form.edit_subtasks = $form.edit_subtasks.filter(
-      (_: string, i: number) => i !== index
-    );
+    if ($form.edit_subtasks.length > 1) {
+      $form.edit_subtasks = $form.edit_subtasks.filter(
+        (_: string, i: number) => i !== index
+      );
+      $form.subTaskIds = $form.subTaskIds.filter((id: number, i: number) => {
+        if (i === index) {
+          if (id !== 0) {
+            $form.deletedSubs.push(id);
+          }
+          return false;
+        }
+        return true;
+      });
+    }
   }
 
   function handleInputAdder() {
     $form.edit_subtasks = [...$form.edit_subtasks, ""];
     $form.edit_subtasks = $form.edit_subtasks;
+
+    $form.subTaskIds = [...$form.subTaskIds, 0];
+    $form.subTaskIds = $form.subTaskIds;
   }
 
   function handleReset() {
-    $form.edit_tname = "";
-    $form.edit_description = "";
-    $form.edit_subtasks = [];
+    $form.taskId = task.id
+    $form.edit_tname = task.name;
+    $form.edit_description = task.description;
+    task.subtasks.forEach((sub: any) => {
+      $form.edit_subtasks.push(sub.name);
+    });
+
+    task.subtasks.forEach((sub: any) => {
+      $form.subTaskIds.push(sub.id);
+    });
   }
+
   $: isSubtaskEmpty = () => {
     for (const [key, value] of Object.entries($form.edit_subtasks)) {
       if (!value) {
-        return false
+        return false;
       }
     }
-    return true
-  }
-  $: enab = ($form.edit_tname && $form.edit_subtasks.length == 0) || ($form.edit_tname && isSubtaskEmpty()) ? false : true;
+    return true;
+  };
+  $: enab =
+    ($form.edit_tname && $form.edit_subtasks.length == 0) ||
+    ($form.edit_tname && isSubtaskEmpty())
+      ? false
+      : true;
 </script>
 
 <Dialog.Root>
@@ -87,7 +136,7 @@
           <Textarea
             placeholder="e.g. Be like water my friend"
             class="w-full focus:border-purp_manager-def border-gray-500"
-            bind:value={$form.description}
+            bind:value={$form.edit_description}
           />
         </div>
         <div class="space-y-2">
@@ -103,13 +152,6 @@
             </Tooltip.Root>
           {/if}
           <ScrollArea class="w-full h-[100px]">
-            {#if $form.edit_subtasks.length == 0}
-              <div
-                class="flex justify-center items-center text-gray-300 font-semibold opacity-40"
-              >
-                No Subtasks are available
-              </div>
-            {/if}
             {#each $form.edit_subtasks as input, index}
               <div class="flex justify-center items-center gap-1">
                 <Input bind:value={input} name={`input-${index}`} />
@@ -142,7 +184,7 @@
             class="w-full p-3"
             disabled={enab}
           >
-            Create Task
+            Update Task
           </Button>
         </Dialog.Close>
       </Dialog.Footer>

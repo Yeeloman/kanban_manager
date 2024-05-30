@@ -74,8 +74,11 @@ interface StateManager extends Writable<Board[]> {
 
     addTask: (newTask: Task) => void;
     updateTask: (id: number, categoryId: number, status: STATUS) => void;
+    updateTaskNameAndDesc: (upTask: Task) => void;
 
     addSubTask: (newSub: Subtask) => void;
+    updateSubTask: (subtasks: Subtask) => void;
+    deleteSubTask: (subTaskIds: number[]) => void;
 }
 
 const createManager = (): StateManager => {
@@ -212,7 +215,31 @@ const createManager = (): StateManager => {
                 }
                 return board
             })
+        })
+    }
 
+    const updateTaskNameAndDesc = (upTask: Task) => {
+        update(boards => {
+            return boards.map(board => {
+                return {
+                    ...board,
+                    category: board.category.map(cat => {
+                        if (cat.id === upTask.categoryId) {
+                            return {
+                                ...cat,
+                                tasks: cat.tasks.map(task => {
+                                    if (task.id === upTask.id) {
+                                        task.name = upTask.name
+                                        task.description = upTask.description
+                                    }
+                                    return task
+                                })
+                            }
+                        }
+                        return cat
+                    })
+                }
+            })
         })
     }
 
@@ -240,6 +267,54 @@ const createManager = (): StateManager => {
         });
     };
 
+    const updateSubTask = (subtask: Subtask) => {
+        update(boards => {
+            return boards.map(board => {
+                return {
+                    ...board,
+                    category: board.category.map(cat => {
+                        return {
+                            ...cat,
+                            tasks: cat.tasks.map(task => {
+                                return {
+                                    ...task,
+                                    subtasks: task.subtasks.map(sub => {
+                                        if (sub.id === subtask.id) {
+                                            sub.name = subtask.name
+                                            sub.done = false
+                                        }
+                                        return sub
+                                    })
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        })
+    }
+
+    const deleteSubTask = (subTaskIds: number[]) => {
+        update(boards => {
+            return boards.map(board => {
+                return {
+                    ...board,
+                    category: board.category.map(cat => {
+                        return {
+                            ...cat,
+                            tasks: cat.tasks.map(task => {
+                                return {
+                                    ...task,
+                                    subtasks: task.subtasks.filter(sub => !subTaskIds.includes(sub.id))
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        })
+    }
+
     return {
         subscribe,
         update,
@@ -253,7 +328,10 @@ const createManager = (): StateManager => {
         getActiveBoard,
         addTask,
         updateTask,
+        updateTaskNameAndDesc,
         addSubTask,
+        updateSubTask,
+        deleteSubTask,
     };
 };
 

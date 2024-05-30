@@ -50,7 +50,6 @@
         (_: string, i: number) => i !== index
       );
       $form.categoryIds = $form.categoryIds.filter(
-        // (_: string, i: number) => i !== index
         (id: number, i: number) => {
           if (i === index) {
             if (id !== 0) {

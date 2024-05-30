@@ -22,9 +22,17 @@ export const taskAdderSchema = z.object({
 });
 
 export const taskEditorSchema = z.object({
+    taskId: z.number(),
     edit_tname: z.string().min(1, "Task name can't be empty"),
     edit_description: z.string().optional(),
-    edit_subtasks: z.array(z.string().min(1, "Subtask can not be empty")).optional().default([]),
+    subTaskIds: z.array(z.number()).default([]),
+    deletedSubs: z.array(z.number()).default([]),
+    edit_subtasks: z.array(z.string()).default([]),
+    // edit_subtasks: z.array(z.object({
+    //     id: z.number(),
+    //     name: z.string(),
+    //     done: z.boolean(),
+    // }))
 });
 
 export const taskDisplayerSchema = z.object({

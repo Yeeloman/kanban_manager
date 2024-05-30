@@ -54,7 +54,6 @@
     stateManager.updateTask($message[0].id, $message[0].categoryId, $message[0].status)
   }
 </script>
-
 <div class="w-full h-full">
   <Dialog.Root>
     <div class="flex justify-center items-center hover:text-purp_manager-def ">
@@ -177,7 +176,7 @@
               Save
             </Button>
           </Dialog.Close>
-          <TaskEditMinimal {taskEditorForm} />
+          <TaskEditMinimal {taskEditorForm} {task} />
           <DeleteTaskDialog />
         </Dialog.Footer>
       </form>

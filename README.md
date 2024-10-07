@@ -68,6 +68,8 @@ Kanban Manager is a web-based application designed to help teams manage tasks us
 - [Yeeloman](https://github.com/Yeeloman)
 - [Yandelf](https://github.com/Yandelff00)
 
+## [Live Demo](https://yeelo-kanban-manager.netlify.app/)
+
 ## Contribution
 
 Contributions are welcome! Please fork the repository and submit pull requests.
